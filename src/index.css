@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/*
+  Темная тема целиком: сайт про тяжелые интерфейсы и канвасы, свет только от акцента.
+  Один акцент - сигнальный оранжевый. Скругления: кнопки и чипы pill, карточки 20px, ноды 12px.
+*/
+:root {
+  --bg: oklch(0.145 0.006 275);
+  --surface: oklch(0.185 0.007 275);
+  --surface-2: oklch(0.225 0.008 275);
+  --ink: oklch(0.97 0.003 265);
+  --ink-2: oklch(0.8 0.008 265);
+  --ink-3: oklch(0.64 0.01 265);
+  --line: oklch(1 0 0 / 0.09);
+  --line-strong: oklch(1 0 0 / 0.16);
+  --accent: oklch(0.72 0.19 42);
+  --accent-ink: oklch(0.79 0.16 48);
+  --accent-soft: oklch(0.72 0.19 42 / 0.12);
+  --dot: oklch(1 0 0 / 0.1);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --font-sans: "Onest Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Unbounded Variable", "Onest Variable", ui-sans-serif, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+html {
+  scroll-padding-top: 5rem;
+  background: var(--bg);
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--accent);
+  color: oklch(0.18 0.01 40);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 8px;
+}
+
+/* Зерно поверх всей страницы: фиксированный слой, на скролл не влияет */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.dot-grid {
+  background-image: radial-gradient(var(--dot) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* Контурные цифры для хакатонов */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--line-strong);
+}
+
+.text-outline-accent {
+  color: transparent;
+  -webkit-text-stroke: 1.5px oklch(0.72 0.19 42 / 0.45);
+}
+
+/* Карточка с подсветкой рамки под курсором. --x/--y ставятся из JS напрямую, без ре-рендеров */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(420px circle at var(--x, 50%) var(--y, -40%), oklch(0.72 0.19 42 / 0.75), transparent 45%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 40s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* React Flow под токены */
+.react-flow {
+  --xy-edge-stroke-default: var(--ink-3);
+  --xy-edge-stroke-width-default: 1.5;
+  --xy-background-color-default: transparent;
+}
+.react-flow__edge.is-current .react-flow__edge-path {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+.react-flow__node {
+  cursor: grab;
+}
+.react-flow__node.dragging {
+  cursor: grabbing;
+}

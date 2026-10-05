@@ -1,4 +1,4 @@
-import type { PointerEvent, ReactNode } from "react";
+import { useEffect, useState, type PointerEvent, type ReactNode } from "react";
 import {
   ArrowRight,
   Bell,
@@ -18,6 +18,7 @@ import {
   TreeStructure,
   UsersThree,
 } from "@phosphor-icons/react";
+import { useReducedMotion } from "motion/react";
 import { pixWork } from "../content";
 import { Reveal } from "./Reveal";
 
@@ -40,6 +41,81 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
 // Иллюстрация к иконочному пакету: настоящие иконки из библиотеки
 const sampleIcons = [FlowArrow, TreeStructure, ChartLine, UsersThree, Folder, GearSix, MagnifyingGlass, Bell, PencilSimple, Trash, ShareNetwork, Cube, Lightning, StackIcon, Robot, Database];
 
+// Нажатие на иконку прогоняет ее по пайплайну пакета: шаги подсвечиваются по очереди
+function IconPipeline({ steps }: { steps: string[] }) {
+  const reduce = useReducedMotion();
+  const [selected, setSelected] = useState(0);
+  const [step, setStep] = useState(steps.length - 1);
+  const [run, setRun] = useState(0);
+
+  useEffect(() => {
+    if (run === 0) return;
+    if (reduce) {
+      setStep(steps.length - 1);
+      return;
+    }
+    setStep(0);
+    let i = 0;
+    const t = setInterval(() => {
+      i += 1;
+      setStep(i);
+      if (i >= steps.length - 1) clearInterval(t);
+    }, 320);
+    return () => clearInterval(t);
+  }, [run, reduce, steps.length]);
+
+  const pick = (i: number) => {
+    setSelected(i);
+    setRun((r) => r + 1);
+  };
+  const Selected = sampleIcons[selected];
+
+  return (
+    <>
+      <div className="px-7 pb-7 sm:px-8 sm:pb-8">
+        <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-2 font-mono text-[12px]" aria-label="Пайплайн пакета иконок">
+          {steps.map((p, i) => {
+            const done = i <= step;
+            const current = i === step && step < steps.length - 1;
+            return (
+              <li key={p} className="flex items-center gap-1.5">
+                <span
+                  className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 transition-colors duration-200 ${
+                    current ? "border-accent bg-accent text-[oklch(0.18_0.02_40)]" : done ? "border-accent/60 text-ink" : "border-line-strong text-ink-3"
+                  }`}
+                >
+                  {i === steps.length - 1 && done && <Selected size={13} weight="bold" />}
+                  {p}
+                </span>
+                {i < steps.length - 1 && <ArrowRight size={12} className={`transition-colors duration-200 ${i < step ? "text-accent" : "text-ink-3"}`} />}
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+      <div className="mt-auto border-t border-line bg-bg/40 p-5 sm:p-6">
+        <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
+          {sampleIcons.map((Icon, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => pick(i)}
+              aria-pressed={i === selected}
+              aria-label={`Прогнать иконку ${i + 1} через пайплайн`}
+              className={`grid h-14 place-items-center rounded-[12px] border transition duration-200 hover:-translate-y-0.5 active:scale-95 ${
+                i === selected ? "border-accent/60 bg-accent-soft text-accent" : "border-line bg-surface text-ink-2 hover:border-line-strong hover:text-ink"
+              }`}
+            >
+              <Icon size={24} />
+            </button>
+          ))}
+        </div>
+        <p className="mt-4 font-mono text-[12px] text-ink-3">нажми на иконку: она пройдет путь от Figma до пакета</p>
+      </div>
+    </>
+  );
+}
+
 export function Work() {
   const { designSystem, e2e, export: exp, journal, assistant } = pixWork;
   return (
@@ -51,28 +127,11 @@ export function Work() {
       <div className="mt-14 grid gap-4 md:grid-cols-6">
         <Reveal className="md:col-span-4">
           <Card className="flex flex-col overflow-hidden">
-            <div className="p-7 sm:p-8">
+            <div className="px-7 pb-5 pt-7 sm:px-8 sm:pt-8">
               <h3 className="text-2xl font-semibold tracking-tight">{designSystem.title}</h3>
               <p className="mt-3 max-w-[60ch] text-[15.5px] leading-relaxed text-ink-2">{designSystem.text}</p>
-              <ol className="mt-6 flex flex-wrap items-center gap-x-1.5 gap-y-2 font-mono text-[12px] text-ink-2">
-                {designSystem.pipeline.map((p, i) => (
-                  <li key={p} className="flex items-center gap-1.5">
-                    <span className="rounded-full border border-line-strong px-2.5 py-1">{p}</span>
-                    {i < designSystem.pipeline.length - 1 && <ArrowRight size={12} className="text-accent" />}
-                  </li>
-                ))}
-              </ol>
             </div>
-            <div aria-hidden className="mt-auto grid grid-cols-4 gap-2 border-t border-line bg-bg/40 p-5 sm:grid-cols-8 sm:p-6">
-              {sampleIcons.map((Icon, i) => (
-                <div
-                  key={i}
-                  className={`grid h-14 place-items-center rounded-[12px] border transition duration-300 hover:-translate-y-0.5 hover:border-accent hover:text-accent ${i === 0 ? "border-accent/50 bg-accent-soft text-accent" : "border-line bg-surface text-ink-2"}`}
-                >
-                  <Icon size={24} />
-                </div>
-              ))}
-            </div>
+            <IconPipeline steps={designSystem.pipeline} />
           </Card>
         </Reveal>
 

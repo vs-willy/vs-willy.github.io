@@ -13,7 +13,7 @@ export function Stack() {
             <h3 className="font-mono text-[13px] text-ink-3">{g.group}</h3>
             <ul className="mt-4 flex flex-wrap gap-2">
               {g.items.map((item) => (
-                <li key={item} className="rounded-full border border-line-strong px-3 py-1.5 text-[14px] text-ink transition hover:border-accent hover:text-accent">
+                <li key={item} className="rounded-full border border-line-strong px-3 py-1.5 text-[14px] text-ink">
                   {item}
                 </li>
               ))}

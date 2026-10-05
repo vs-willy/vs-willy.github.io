@@ -31,7 +31,7 @@ function Pinned() {
   const Visual = visuals[active];
 
   return (
-    <section ref={ref} id="canvas" style={{ height: `${canvasSteps.length * 90 + 30}vh` }} className="relative">
+    <section ref={ref} id="canvas" data-anchor-offset="0" style={{ height: `${canvasSteps.length * 90 + 30}vh` }} className="relative">
       <div className="sticky top-0 flex h-[100dvh] items-center">
         <div className="mx-auto grid w-full max-w-7xl grid-cols-[1fr_1.05fr] items-center gap-16 px-6">
           <div>

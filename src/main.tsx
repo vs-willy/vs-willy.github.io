@@ -6,6 +6,9 @@ import "@fontsource-variable/jetbrains-mono";
 import "@xyflow/react/dist/base.css";
 import "./index.css";
 import { App } from "./App";
+import { initSmoothAnchors } from "./smoothAnchors";
+
+initSmoothAnchors();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -2,10 +2,10 @@ import { motion, useScroll, useSpring } from "motion/react";
 import { contacts } from "../content";
 
 const links = [
-  { href: "#canvas", label: "Канвас" },
-  { href: "#work", label: "Работа" },
+  { href: "#pix", label: "PIX Robotics" },
+  { href: "#virtuum", label: "ВиртуумЛаб" },
   { href: "#hackathons", label: "Хакатоны" },
-  { href: "#path", label: "Опыт" },
+  { href: "#path", label: "Путь" },
 ];
 
 export function Nav() {

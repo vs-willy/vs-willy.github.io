@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { Trophy } from "@phosphor-icons/react";
 import { hackathons } from "../content";
+import { ChapterHeader } from "./Chapter";
 import { Reveal } from "./Reveal";
 
 function Prize({ h, index }: { h: (typeof hackathons)[number]; index: number }) {
@@ -44,15 +45,15 @@ function Prize({ h, index }: { h: (typeof hackathons)[number]; index: number }) 
 
 export function Hackathons() {
   return (
-    <section id="hackathons" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:py-32">
-      <Reveal>
-        <h2 className="max-w-[16ch] font-display text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.04em]">
-          Два призовых места на одной платформе
-        </h2>
-        <p className="mt-6 max-w-[62ch] text-[16px] leading-relaxed text-ink-2">
-          Участвую с коллегами в команде «Резонанс». Оба решения построены на нашей платформе дискретно-событийной симуляции Praxis на C#/.NET. Мы добавляем в нее новые домены, а не пишем всё заново под каждый кейс.
-        </p>
-      </Reveal>
+    <section id="hackathons" aria-label="Хакатоны">
+      <ChapterHeader name="Хакатоны" period="2026" role="с коллегами, команда «Резонанс»">
+        <Reveal>
+          <p className="mt-10 max-w-[62ch] text-[17px] leading-relaxed text-ink-2">
+            Оба решения построены на нашей платформе дискретно-событийной симуляции Praxis на C#/.NET. Мы добавляем в нее новые домены, а не пишем всё заново под каждый кейс.
+          </p>
+        </Reveal>
+      </ChapterHeader>
+      <div className="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:pb-32">
       <div className="mt-14 grid gap-4 lg:grid-cols-2 lg:items-start">
         {hackathons.map((h, i) => (
           <div key={h.name} className={i === 1 ? "lg:mt-24" : ""}>
@@ -61,6 +62,7 @@ export function Hackathons() {
             </Reveal>
           </div>
         ))}
+      </div>
       </div>
     </section>
   );

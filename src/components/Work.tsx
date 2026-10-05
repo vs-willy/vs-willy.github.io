@@ -45,7 +45,7 @@ export function Work() {
   return (
     <section id="work" className="mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:py-32">
       <h2 className="max-w-[18ch] font-display text-[clamp(2rem,4vw,3.4rem)] font-semibold leading-[1.02] tracking-[-0.04em]">
-        Что еще сделал в PIX Robotics
+        Инфраструктура и бэкенд
       </h2>
 
       <div className="mt-14 grid gap-4 md:grid-cols-6">

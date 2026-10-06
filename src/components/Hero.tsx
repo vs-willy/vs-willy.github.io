@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowDown, TelegramLogo } from "@phosphor-icons/react";
 import { contacts } from "../content";
+import { INTRO_DELAY } from "./Loader";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -13,7 +14,7 @@ function Word({ children, delay, className }: { children: string; delay: number;
         className={`inline-block ${className ?? ""}`}
         initial={reduce ? false : { y: "110%" }}
         animate={{ y: 0 }}
-        transition={{ duration: 0.9, delay, ease }}
+        transition={{ duration: 0.9, delay: delay + INTRO_DELAY, ease }}
       >
         {children}
       </motion.span>
@@ -26,7 +27,7 @@ export function Hero() {
   const fade = (delay: number) =>
     reduce
       ? {}
-      : { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay, ease } };
+      : { initial: { opacity: 0, y: 14 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.8, delay: delay + INTRO_DELAY, ease } };
 
   return (
     <section id="top" className="relative isolate overflow-hidden">

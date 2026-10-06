@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowDown, TelegramLogo } from "@phosphor-icons/react";
 import { contacts } from "../content";
-import { HeroMap } from "./HeroMap";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -32,7 +31,7 @@ export function Hero() {
   return (
     <section id="top" className="relative isolate overflow-hidden">
       <div aria-hidden className="pointer-events-none absolute -right-40 top-20 -z-10 h-[520px] w-[520px] rounded-full bg-accent/10 blur-[140px]" />
-      <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pb-20 pt-28 sm:px-6 lg:min-h-[100dvh] lg:grid-cols-[1fr_1.05fr] lg:gap-14 lg:pb-16 lg:pt-24">
+      <div className="mx-auto flex max-w-7xl flex-col justify-end px-4 pb-16 pt-36 sm:px-6 lg:min-h-[88dvh] lg:pb-20">
         <div>
           <motion.p {...fade(0.1)} className="font-mono text-[13px] text-ink-3">
             <span className="text-ink">Виталий Иванов</span>
@@ -40,7 +39,7 @@ export function Hero() {
             fullstack-разработчик
           </motion.p>
 
-          <h1 className="mt-6 font-display text-[clamp(2.2rem,3.7vw,3.7rem)] font-semibold leading-[1.02] tracking-[-0.04em]">
+          <h1 className="mt-6 w-[min(100%,14ch)] font-display text-[clamp(2.6rem,7.4vw,7rem)] font-semibold leading-[1.02] tracking-[-0.04em]">
             <Word delay={0.15}>Делаю</Word> <Word delay={0.22}>тяжелые</Word> <Word delay={0.29}>интерфейсы</Word>{" "}
             <Word delay={0.4} className="text-accent">
               быстрыми
@@ -71,12 +70,6 @@ export function Hero() {
           </motion.div>
         </div>
 
-        <motion.div {...fade(0.35)}>
-          <HeroMap />
-          <p className="mt-3 text-[13px] leading-snug text-ink-3">
-            Маленький редактор на @xyflow/react, той же библиотеке, на которой построен мой рабочий канвас.
-          </p>
-        </motion.div>
       </div>
     </section>
   );

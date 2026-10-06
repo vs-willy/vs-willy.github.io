@@ -43,7 +43,6 @@ export const pixWork = {
   designSystem: {
     title: "Дизайн-система из 3 npm-пакетов",
     text: "UI-библиотека поверх Ant Design 5, пакет иконок и дизайн-токены. Пакет иконок собрал с нуля: 740+ иконок, которые автоматически выгружаются из Figma и превращаются в TypeScript-компоненты.",
-    pipeline: ["Figma", "SVGO", "SVGR", "TS-компоненты", "GitLab Registry"],
   },
   e2e: {
     title: "E2E с нуля",
@@ -90,22 +89,16 @@ export const path = [
   { period: "окт 2024 - сейчас", company: "PIX Robotics", role: "Middle Fullstack-разработчик" },
 ];
 
-// Глава PIX Robotics. Цифры и задачи - из выгрузки Jira (проект PM, исполнитель v.ivanov).
-// Задачи до мая 2024 перенесены в проект одним днем 21.05.2024, по спринтам это работа с сентября 2023.
+// Глава PIX Robotics
 export const pix = {
   period: "сен 2023 - сейчас",
   role: "Junior, с октября 2024 Middle Fullstack-разработчик",
   product:
     "PIX Процессы - enterprise-платформа для процессного управления: канвас для карт процессов, Process Mining и Task Mining. Команда около 10 разработчиков, все фулстек.",
-  jira: [
-    { value: "626", label: "задач в Jira" },
-    { value: "284", label: "фичи и доработки" },
-    { value: "243", label: "исправленных бага" },
-  ],
-  modules: [
-    { name: "Process Studio", count: 509 },
-    { name: "Process Mining", count: 119 },
-    { name: "Task Mining", count: 18 },
+  facts: [
+    { value: "3 года", label: "в компании, с сентября 2023" },
+    { value: "1 год", label: "от Junior до Middle" },
+    { value: "2 из 4", label: "продуктов компании на моей дизайн-системе" },
   ],
   people: "Регулярно делаю код-ревью, менторю и онбордю новых коллег, выступал на внутреннем митапе с докладом про пирамиду тестов.",
   eras: [

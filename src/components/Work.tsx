@@ -1,24 +1,5 @@
-import { useEffect, useState, type PointerEvent, type ReactNode } from "react";
-import {
-  ArrowRight,
-  Bell,
-  ChartLine,
-  Cube,
-  Database,
-  FlowArrow,
-  Folder,
-  GearSix,
-  Lightning,
-  MagnifyingGlass,
-  PencilSimple,
-  Robot,
-  ShareNetwork,
-  Stack as StackIcon,
-  Trash,
-  TreeStructure,
-  UsersThree,
-} from "@phosphor-icons/react";
-import { useReducedMotion } from "motion/react";
+import { useId, type PointerEvent, type ReactNode } from "react";
+import { Robot } from "@phosphor-icons/react";
 import { pixWork } from "../content";
 import { Reveal } from "./Reveal";
 
@@ -38,81 +19,55 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
   );
 }
 
-// Иллюстрация к иконочному пакету: настоящие иконки из библиотеки
-const sampleIcons = [FlowArrow, TreeStructure, ChartLine, UsersThree, Folder, GearSix, MagnifyingGlass, Bell, PencilSimple, Trash, ShareNetwork, Cube, Lightning, StackIcon, Robot, Database];
-
-// Нажатие на иконку прогоняет ее по пайплайну пакета: шаги подсвечиваются по очереди
-function IconPipeline({ steps }: { steps: string[] }) {
-  const reduce = useReducedMotion();
-  const [selected, setSelected] = useState(0);
-  const [step, setStep] = useState(steps.length - 1);
-  const [run, setRun] = useState(0);
-
-  useEffect(() => {
-    if (run === 0) return;
-    if (reduce) {
-      setStep(steps.length - 1);
-      return;
-    }
-    setStep(0);
-    let i = 0;
-    const t = setInterval(() => {
-      i += 1;
-      setStep(i);
-      if (i >= steps.length - 1) clearInterval(t);
-    }, 320);
-    return () => clearInterval(t);
-  }, [run, reduce, steps.length]);
-
-  const pick = (i: number) => {
-    setSelected(i);
-    setRun((r) => r + 1);
-  };
-  const Selected = sampleIcons[selected];
-
+// Как устроена дизайн-система: откуда берутся пакеты и куда они уходят
+function DesignSystemDiagram() {
+  const id = useId().replace(/:/g, "");
+  const pk = [
+    { y: 28, title: "Токены", sub: "цвета, типографика" },
+    { y: 96, title: "Иконки", sub: "740+, SVGO и SVGR" },
+    { y: 164, title: "UI-библиотека", sub: "обертки над AntD 5" },
+  ];
+  const px = 168;
+  const pw = 152;
   return (
-    <>
-      <div className="px-7 pb-7 sm:px-8 sm:pb-8">
-        <ol className="flex flex-wrap items-center gap-x-1.5 gap-y-2 font-mono text-[12px]" aria-label="Пайплайн пакета иконок">
-          {steps.map((p, i) => {
-            const done = i <= step;
-            const current = i === step && step < steps.length - 1;
-            return (
-              <li key={p} className="flex items-center gap-1.5">
-                <span
-                  className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 transition-colors duration-200 ${
-                    current ? "border-accent bg-accent text-[oklch(0.18_0.02_40)]" : done ? "border-accent/60 text-ink" : "border-line-strong text-ink-3"
-                  }`}
-                >
-                  {i === steps.length - 1 && done && <Selected size={13} weight="bold" />}
-                  {p}
-                </span>
-                {i < steps.length - 1 && <ArrowRight size={12} className={`transition-colors duration-200 ${i < step ? "text-accent" : "text-ink-3"}`} />}
-              </li>
-            );
-          })}
-        </ol>
-      </div>
-      <div className="mt-auto border-t border-line bg-bg/40 p-5 sm:p-6">
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
-          {sampleIcons.map((Icon, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => pick(i)}
-              aria-pressed={i === selected}
-              aria-label={`Прогнать иконку ${i + 1} через пайплайн`}
-              className={`grid h-14 place-items-center rounded-[12px] border transition duration-200 hover:-translate-y-0.5 active:scale-95 ${
-                i === selected ? "border-accent/60 bg-accent-soft text-accent" : "border-line bg-surface text-ink-2 hover:border-line-strong hover:text-ink"
-              }`}
-            >
-              <Icon size={24} />
-            </button>
-          ))}
-        </div>
-        <p className="mt-4 font-mono text-[12px] text-ink-3">нажми на иконку: она пройдет путь от Figma до пакета</p>
-      </div>
-    </>
+    <svg viewBox="0 0 600 216" className="h-auto w-full" role="img" aria-label="Иконки выгружаются из Figma автоматически, токены пока вносятся вручную. Три пакета публикуются в GitLab Registry и используются в двух из четырех продуктов компании">
+      <defs>
+        <marker id={`${id}-a`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L8 4 L0 8 z" className="fill-ink-3" />
+        </marker>
+        <marker id={`${id}-h`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0 0 L8 4 L0 8 z" className="fill-accent" />
+        </marker>
+      </defs>
+
+      {/* Figma */}
+      <rect x="8" y="68" width="96" height="56" rx="10" className="fill-surface-2 stroke-line-strong" />
+      <text x="56" y="92" textAnchor="middle" className="fill-ink text-[13px] font-semibold">Figma</text>
+      <text x="56" y="110" textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">дизайнеры</text>
+      <path d={`M104 96 H${px}`} className="stroke-accent" strokeWidth={1.5} markerEnd={`url(#${id}-h)`} />
+      <text x="136" y="88" textAnchor="middle" className="fill-accent font-mono text-[10px]">авто</text>
+      <path d={`M80 68 V50 H${px}`} className="fill-none stroke-ink-3" strokeDasharray="3 4" markerEnd={`url(#${id}-a)`} />
+      <text x="124" y="42" textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">вручную</text>
+
+      {/* три пакета */}
+      {pk.map((p, i) => (
+        <g key={p.title}>
+          <rect x={px} y={p.y} width={pw} height="44" rx="10" className={i === 1 ? "fill-accent-soft stroke-accent" : "fill-surface-2 stroke-line-strong"} />
+          <text x={px + 14} y={p.y + 19} className="fill-ink text-[12.5px] font-semibold">{p.title}</text>
+          <text x={px + 14} y={p.y + 34} className="fill-ink-3 font-mono text-[10px]">{p.sub}</text>
+          <path d={`M${px + pw} ${p.y + 22} H${px + pw + 20} V108 H392`} className="fill-none stroke-ink-3" markerEnd={i === 1 ? `url(#${id}-a)` : undefined} />
+        </g>
+      ))}
+
+      {/* реестр и продукты */}
+      <rect x="392" y="80" width="96" height="56" rx="10" className="fill-surface-2 stroke-line-strong" />
+      <text x="440" y="104" textAnchor="middle" className="fill-ink text-[12.5px] font-semibold">GitLab</text>
+      <text x="440" y="121" textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">Registry</text>
+      <path d="M488 108 H520" className="stroke-ink-3" markerEnd={`url(#${id}-a)`} />
+      <rect x="520" y="80" width="72" height="56" rx="10" className="fill-surface-2 stroke-line-strong" />
+      <text x="556" y="104" textAnchor="middle" className="fill-ink text-[12.5px] font-semibold">2 из 4</text>
+      <text x="556" y="121" textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">продуктов</text>
+    </svg>
   );
 }
 
@@ -124,14 +79,23 @@ export function Work() {
         Инфраструктура и бэкенд
       </h2>
 
-      <div className="mt-14 grid gap-4 md:grid-cols-6">
+      <div className="mt-14 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-6">
         <Reveal className="md:col-span-4">
           <Card className="flex flex-col overflow-hidden">
-            <div className="px-7 pb-5 pt-7 sm:px-8 sm:pt-8">
+            <div className="p-7 sm:p-8">
               <h3 className="text-2xl font-semibold tracking-tight">{designSystem.title}</h3>
               <p className="mt-3 max-w-[60ch] text-[15.5px] leading-relaxed text-ink-2">{designSystem.text}</p>
             </div>
-            <IconPipeline steps={designSystem.pipeline} />
+            <div className="mt-auto border-t border-line bg-bg/40 px-5 py-6 sm:px-8">
+              <div className="overflow-x-auto">
+                <div className="min-w-[480px]">
+                  <DesignSystemDiagram />
+                </div>
+              </div>
+              <p className="mt-4 font-mono text-[12px] leading-relaxed text-ink-3">
+                патч-версии публикуются автоматически в CI, минорные и мажорные вручную
+              </p>
+            </div>
           </Card>
         </Reveal>
 

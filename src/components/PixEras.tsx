@@ -3,7 +3,7 @@ import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { pix } from "../content";
 import { Reveal } from "./Reveal";
 
-// Задачи из Jira по трем периодам. Вкладки вместо длинного списка
+// Работа по трем периодам. Вкладки вместо длинного списка
 export function PixEras() {
   const [active, setActive] = useState(pix.eras.length - 1);
   const reduce = useReducedMotion();

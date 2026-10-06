@@ -111,13 +111,20 @@ body {
   opacity: 1;
 }
 
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
 @keyframes marquee {
   to {
     transform: translateX(-50%);
   }
 }
 .marquee-track {
-  animation: marquee 40s linear infinite;
+  animation: marquee 90s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

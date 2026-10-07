@@ -1,14 +1,17 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "@fontsource-variable/onest";
-import "@fontsource-variable/unbounded";
 import "@fontsource-variable/jetbrains-mono";
-import "@xyflow/react/dist/base.css";
 import "./index.css";
 import { App } from "./App";
-import { initSmoothAnchors } from "./smoothAnchors";
 
-initSmoothAnchors();
+// Тема по умолчанию светлая, выбор из дока запоминается
+try {
+  const saved = localStorage.getItem("theme");
+  if (saved === "dark" || saved === "light") document.documentElement.dataset.theme = saved;
+} catch {
+  /* без localStorage остается светлая */
+}
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

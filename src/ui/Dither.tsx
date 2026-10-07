@@ -1,0 +1,117 @@
+import { useEffect, useRef } from "react";
+
+// Растрирует SVG в пиксельный дизеринг (матрица Байера 4x4), как точечные картинки на cali.so.
+// Цвет точек берется из токена --ink, поэтому картинка сама подстраивается под тему.
+// С interactive курсор работает как фонарик: рядом с ним картинка проявляется плотнее.
+
+const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+
+type Props = {
+  svg: string; // разметка svg с viewBox
+  cols: number; // разрешение сетки по ширине
+  rows: number;
+  className?: string;
+  interactive?: boolean;
+  label: string;
+};
+
+export function Dither({ svg, cols, rows, className, interactive, label }: Props) {
+  const ref = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = ref.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    let lum: Float32Array | null = null;
+    let mouse: { x: number; y: number } | null = null;
+    let raf = 0;
+    let alive = true;
+
+    const src = document.createElement("canvas");
+    src.width = cols;
+    src.height = rows;
+    const sctx = src.getContext("2d", { willReadFrequently: true })!;
+
+    const img = new Image();
+    img.onload = () => {
+      if (!alive) return;
+      sctx.fillStyle = "#fff";
+      sctx.fillRect(0, 0, cols, rows);
+      sctx.drawImage(img, 0, 0, cols, rows);
+      const d = sctx.getImageData(0, 0, cols, rows).data;
+      lum = new Float32Array(cols * rows);
+      for (let i = 0; i < cols * rows; i++) {
+        lum[i] = (0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]) / 255;
+      }
+      draw();
+    };
+    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+
+    function draw() {
+      if (!lum || !ctx || !canvas) return;
+      const dpr = Math.min(devicePixelRatio || 1, 2);
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (canvas.width !== Math.round(w * dpr)) {
+        canvas.width = Math.round(w * dpr);
+        canvas.height = Math.round(h * dpr);
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      const cw = w / cols;
+      const ch = h / rows;
+      const ink = getComputedStyle(canvas).getPropertyValue("--ink").trim() || "#222";
+      ctx.fillStyle = ink;
+      const size = Math.max(1, Math.min(cw, ch) * 0.82);
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          let v = lum[y * cols + x];
+          if (mouse) {
+            const dx = (x - mouse.x) / cols;
+            const dy = (y - mouse.y) / rows;
+            const k = Math.exp(-(dx * dx + dy * dy) * 28);
+            v = v - k * 0.28 * (1 - v) - k * 0.12;
+          }
+          if (1 - v > BAYER[(y % 4) * 4 + (x % 4)]) {
+            ctx.fillRect(x * cw + (cw - size) / 2, y * ch + (ch - size) / 2, size, size);
+          }
+        }
+      }
+    }
+
+    const onMove = (e: PointerEvent) => {
+      const r = canvas.getBoundingClientRect();
+      mouse = { x: ((e.clientX - r.left) / r.width) * cols, y: ((e.clientY - r.top) / r.height) * rows };
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(draw);
+    };
+    const onLeave = () => {
+      mouse = null;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(draw);
+    };
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (interactive && !reduce) {
+      canvas.addEventListener("pointermove", onMove);
+      canvas.addEventListener("pointerleave", onLeave);
+    }
+    const ro = new ResizeObserver(() => draw());
+    ro.observe(canvas);
+    // Перерисовка при смене темы
+    const mo = new MutationObserver(() => draw());
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+
+    return () => {
+      alive = false;
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+      mo.disconnect();
+      canvas.removeEventListener("pointermove", onMove);
+      canvas.removeEventListener("pointerleave", onLeave);
+    };
+  }, [svg, cols, rows, interactive]);
+
+  return <canvas ref={ref} role="img" aria-label={label} className={className} />;
+}

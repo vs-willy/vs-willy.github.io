@@ -1,38 +1,34 @@
-import { CanvasCase } from "./components/CanvasCase";
-import { Contact } from "./components/Contact";
-import { Hackathons } from "./components/Hackathons";
-import { Hero } from "./components/Hero";
-import { Loader } from "./components/Loader";
-import { Marquee } from "./components/Marquee";
-import { Nav } from "./components/Nav";
-import { Path } from "./components/Path";
-import { PixEras } from "./components/PixEras";
-import { PixIntro } from "./components/PixIntro";
-import { Stack } from "./components/Stack";
-import { Stats } from "./components/Stats";
-import { Virtuum } from "./components/Virtuum";
-import { Work } from "./components/Work";
+import { useEffect } from "react";
+import { Books } from "./pages/Books";
+import { Home } from "./pages/Home";
+import { Project } from "./pages/Project";
+import { Projects } from "./pages/Projects";
+import { useRoute } from "./router";
+import { Dock } from "./ui/Dock";
+import { Footer } from "./ui/Footer";
 
-// Главы по местам работы: PIX Robotics, ВиртуумЛаб, затем хакатоны и общий путь
+// Узкая колонка с пунктирными направляющими по краям, страницы переключаются по хэшу
 export function App() {
+  const route = useRoute();
+  const key = route.name === "project" ? `p-${route.slug}` : route.name;
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [key]);
+
   return (
-    <div className="grain">
-      <Loader />
-      <Nav />
-      <main>
-        <Hero />
-        <Marquee />
-        <PixIntro />
-        <Stats />
-        <CanvasCase />
-        <PixEras />
-        <Work />
-        <Virtuum />
-        <Hackathons />
-        <Path />
-        <Stack />
-      </main>
-      <Contact />
-    </div>
+    <>
+      <div className="guides mx-auto max-w-[640px]">
+        <main className="px-4 pt-14 sm:px-6 sm:pt-20" key={key}>
+          {route.name === "home" && <Home />}
+          {route.name === "projects" && <Projects />}
+          {route.name === "project" && <Project slug={route.slug} />}
+          {route.name === "books" && <Books />}
+        </main>
+        <div className="px-4 sm:px-6">
+          <Footer />
+        </div>
+      </div>
+      <Dock />
+    </>
   );
 }

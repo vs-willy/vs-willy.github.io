@@ -4,8 +4,14 @@ import { useEffect, useRef } from "react";
 // Фото растрируется диффузией ошибки Аткинсона: Байер съедает полутона, и лицо превращается в пятна.
 // Цвет точек берется из токена --ink, поэтому картинка сама подстраивается под тему.
 // С interactive курсор работает как фонарик: рядом с ним картинка проявляется плотнее.
+// С lens вместо фонарика линза: внутри нее портрет набран символами из кода, яркость символа берется из картинки.
 
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
+
+const CODE =
+  'const vitaly = { role: "fullstack", focus: "frontend", stack: ["React", "TypeScript", "C#", ".NET"] }; ' +
+  "export function build(idea: string) { return ship(design(idea)); } " +
+  "useEffect(() => { render(canvas); }, [theme]); while (alive) { learn(); code(); } ";
 
 type Props = {
   svg?: string; // разметка svg с viewBox
@@ -17,10 +23,11 @@ type Props = {
   rows: number;
   className?: string;
   interactive?: boolean;
+  lens?: boolean; // под курсором точки превращаются в символы кода
   label: string;
 };
 
-export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, className, interactive, label }: Props) {
+export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, className, interactive, lens, label }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -32,6 +39,9 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
     let lum: Float32Array | null = null;
     let alpha: Float32Array | null = null;
     let mouse: { x: number; y: number } | null = null;
+    // линза плавно догоняет курсор и раскрывается, r в долях ширины
+    const L = { x: 0, y: 0, r: 0, tx: 0, ty: 0, tr: 0 };
+    let shown: Float32Array | null = null;
     let raf = 0;
     let alive = true;
 
@@ -82,6 +92,9 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
       const dark = document.documentElement.dataset.theme === "dark";
       const size = Math.max(1, Math.min(cw, ch) * 0.82);
       const err = photo ? new Float32Array(cols * rows) : null;
+      if (lens && (!shown || shown.length !== cols * rows)) shown = new Float32Array(cols * rows);
+      const lr = L.r * cols;
+      const inLens = (x: number, y: number) => lr > 0.5 && (x - L.x) ** 2 + (y - L.y) ** 2 < lr * lr;
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           const idx = y * cols + x;
@@ -92,7 +105,7 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
           else if (photo) v *= 0.86;
           // полупрозрачные края фото дают меньше точек: портрет плавно растворяется
           if (photo) v = 1 - (1 - v) * alpha![idx];
-          if (mouse) {
+          if (mouse && !lens) {
             const dx = (x - mouse.x) / cols;
             const dy = (y - mouse.y) / rows;
             const k = Math.exp(-(dx * dx + dy * dy) * 28);
@@ -115,8 +128,60 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
           } else {
             on = 1 - v > BAYER[(y % 4) * 4 + (x % 4)];
           }
+          if (shown) shown[idx] = alpha![idx] < 0.02 ? 0 : 1 - v;
+          if (on && inLens(x, y)) on = false;
           if (on) ctx.fillRect(x * cw + (cw - size) / 2, y * ch + (ch - size) / 2, size, size);
         }
+      }
+      if (shown && lr > 0.5) drawLens(cw, ch);
+    }
+
+    function drawLens(cw: number, ch: number) {
+      if (!ctx || !shown) return;
+      const step = 3; // символ занимает 3x3 точки
+      const fs = step * cw;
+      const lr = L.r * cols;
+      ctx.font = `700 ${fs * 1.12}px "JetBrains Mono Variable", ui-monospace, monospace`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      const per = Math.ceil(cols / step);
+      for (let by = 0; by < rows; by += step) {
+        for (let bx = 0; bx < cols; bx += step) {
+          const cx = bx + step / 2;
+          const cy = by + step / 2;
+          const d = Math.hypot(cx - L.x, cy - L.y);
+          if (d > lr) continue;
+          let sum = 0;
+          let n = 0;
+          for (let y = by; y < Math.min(by + step, rows); y++)
+            for (let x = bx; x < Math.min(bx + step, cols); x++) {
+              sum += shown[y * cols + x];
+              n++;
+            }
+          const k = sum / n;
+          if (k < 0.18) continue;
+          const ch2 = CODE[((by / step) * per + bx / step) % CODE.length];
+          if (ch2 === " ") continue;
+          // к краю линзы символы гаснут
+          const edge = Math.min(1, (lr - d) / (lr * 0.25));
+          ctx.globalAlpha = Math.min(1, (k - 0.1) * 1.7) * edge;
+          ctx.fillText(ch2, cx * cw, cy * ch);
+        }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function tick() {
+      const ease = 0.22;
+      L.x += (L.tx - L.x) * ease;
+      L.y += (L.ty - L.y) * ease;
+      L.r += (L.tr - L.r) * ease;
+      draw();
+      const moving = Math.abs(L.tx - L.x) + Math.abs(L.ty - L.y) > 0.05 || Math.abs(L.tr - L.r) > 0.001;
+      if (moving) raf = requestAnimationFrame(tick);
+      else if (L.tr === 0) {
+        L.r = 0;
+        draw();
       }
     }
 
@@ -124,17 +189,31 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
       const r = canvas.getBoundingClientRect();
       mouse = { x: ((e.clientX - r.left) / r.width) * cols, y: ((e.clientY - r.top) / r.height) * rows };
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(draw);
+      if (lens) {
+        if (L.tr === 0) {
+          L.x = mouse.x;
+          L.y = mouse.y;
+        }
+        L.tx = mouse.x;
+        L.ty = mouse.y;
+        L.tr = 0.2;
+        raf = requestAnimationFrame(tick);
+      } else raf = requestAnimationFrame(draw);
     };
     const onLeave = () => {
       mouse = null;
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(draw);
+      if (lens) {
+        L.tr = 0;
+        raf = requestAnimationFrame(tick);
+      } else raf = requestAnimationFrame(draw);
     };
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (interactive && !reduce) {
       canvas.addEventListener("pointermove", onMove);
+      canvas.addEventListener("pointerdown", onMove);
       canvas.addEventListener("pointerleave", onLeave);
+      canvas.addEventListener("pointercancel", onLeave);
     }
     const ro = new ResizeObserver(() => draw());
     ro.observe(canvas);
@@ -148,9 +227,11 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
       ro.disconnect();
       mo.disconnect();
       canvas.removeEventListener("pointermove", onMove);
+      canvas.removeEventListener("pointerdown", onMove);
       canvas.removeEventListener("pointerleave", onLeave);
+      canvas.removeEventListener("pointercancel", onLeave);
     };
-  }, [svg, src, fit, gamma, photo, cols, rows, interactive]);
+  }, [svg, src, fit, gamma, photo, cols, rows, interactive, lens]);
 
   return <canvas ref={ref} role="img" aria-label={label} className={className} />;
 }

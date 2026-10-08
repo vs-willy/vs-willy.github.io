@@ -124,6 +124,7 @@ export function Home() {
           cols={170}
           rows={170}
           interactive
+          lens
           label="Портрет Виталия, нарисованный точками"
           className="aspect-square w-full max-w-[240px] max-sm:mx-auto max-sm:max-w-[220px]"
         />

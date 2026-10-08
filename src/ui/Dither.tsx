@@ -83,10 +83,12 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           const idx = y * cols + x;
-          if (photo && alpha![idx] < 0.5) continue;
+          if (photo && alpha![idx] < 0.02) continue;
           let v = lum[idx];
           // в темной теме светлое лицо становится плотными светлыми точками, а темным местам оставляем немного точек, чтобы силуэт не пропадал
           if (photo && dark) v = Math.min(1 - v, 0.8);
+          // полупрозрачные края фото дают меньше точек: портрет плавно растворяется
+          if (photo) v = 1 - (1 - v) * alpha![idx];
           if (mouse) {
             const dx = (x - mouse.x) / cols;
             const dy = (y - mouse.y) / rows;

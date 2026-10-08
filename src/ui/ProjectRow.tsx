@@ -1,19 +1,19 @@
-import { useMemo } from "react";
 import type { Project } from "../projects";
 import { href } from "../router";
 import { sound } from "../sound";
-import { thumbArt } from "./art";
 import { Dither } from "./Dither";
-import { iconPaths } from "./Icons";
+import { Logo, logoSrc } from "./Logo";
 
+// Миниатюра проекта: логотип места, где он сделан, в точечном стиле
 export function ProjectThumb({ p, big }: { p: Project; big?: boolean }) {
-  const svg = useMemo(() => thumbArt(iconPaths(p.icon)), [p.icon]);
+  const wide = p.logo === "robozon";
   return (
     <Dither
-      svg={svg}
-      cols={big ? 64 : 32}
-      rows={big ? 40 : 20}
-      label={`Иллюстрация к проекту ${p.title}`}
+      src={logoSrc(p.logo)}
+      fit={big ? (wide ? 0.62 : 0.42) : wide ? 0.82 : 0.6}
+      cols={big ? 140 : 40}
+      rows={big ? 88 : 25}
+      label={`Логотип: ${p.company}`}
       className={big ? "aspect-[8/5] w-full rounded-[10px] border border-line bg-surface" : "h-10 w-16 shrink-0 rounded-[6px] border border-line bg-surface"}
     />
   );
@@ -29,7 +29,9 @@ export function ProjectRow({ p }: { p: Project }) {
         onClick={sound.click}
         className="group flex items-center gap-3 border-b border-line py-3 transition"
       >
-        <ProjectThumb p={p} />
+        <span className="grid h-10 w-16 shrink-0 place-items-center rounded-[6px] border border-line bg-surface text-ink transition group-hover:text-accent-ink">
+          <Logo name={p.logo} className={p.logo === "robozon" ? "h-3 w-12" : p.logo === "pix" ? "h-3.5 w-6" : p.logo === "virtuum" ? "h-5 w-3" : "h-5 w-7"} />
+        </span>
         <span className="min-w-0">
           <span className="block truncate font-medium text-ink transition group-hover:text-accent-ink">{p.title}</span>
           <span className="block truncate text-[13px] text-ink-3">{p.company}</span>

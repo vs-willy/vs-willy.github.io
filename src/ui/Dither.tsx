@@ -7,7 +7,11 @@ import { useEffect, useRef } from "react";
 const BAYER = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5].map((v) => (v + 0.5) / 16);
 
 type Props = {
-  svg: string; // разметка svg с viewBox
+  svg?: string; // разметка svg с viewBox
+  src?: string; // или путь к картинке (черное на прозрачном или фото)
+  fit?: number; // доля площади, которую занимает картинка (для логотипов)
+  gamma?: number; // меньше 1 осветляет средние тона
+  photo?: boolean; // фото: прозрачный фон пустой, в темной теме яркость инвертируется, чтобы не было негатива
   cols: number; // разрешение сетки по ширине
   rows: number;
   className?: string;
@@ -15,7 +19,7 @@ type Props = {
   label: string;
 };
 
-export function Dither({ svg, cols, rows, className, interactive, label }: Props) {
+export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, className, interactive, label }: Props) {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -25,29 +29,39 @@ export function Dither({ svg, cols, rows, className, interactive, label }: Props
     if (!ctx) return;
 
     let lum: Float32Array | null = null;
+    let alpha: Float32Array | null = null;
     let mouse: { x: number; y: number } | null = null;
     let raf = 0;
     let alive = true;
 
-    const src = document.createElement("canvas");
-    src.width = cols;
-    src.height = rows;
-    const sctx = src.getContext("2d", { willReadFrequently: true })!;
+    const buf = document.createElement("canvas");
+    buf.width = cols;
+    buf.height = rows;
+    const sctx = buf.getContext("2d", { willReadFrequently: true })!;
 
     const img = new Image();
     img.onload = () => {
       if (!alive) return;
-      sctx.fillStyle = "#fff";
-      sctx.fillRect(0, 0, cols, rows);
-      sctx.drawImage(img, 0, 0, cols, rows);
+      sctx.clearRect(0, 0, cols, rows);
+      if (!photo) {
+        sctx.fillStyle = "#fff";
+        sctx.fillRect(0, 0, cols, rows);
+      }
+      // вписываем с сохранением пропорций и отступом fit
+      const k = Math.min(cols / img.naturalWidth, rows / img.naturalHeight) * fit;
+      const dw = img.naturalWidth * k;
+      const dh = img.naturalHeight * k;
+      sctx.drawImage(img, (cols - dw) / 2, (rows - dh) / 2, dw, dh);
       const d = sctx.getImageData(0, 0, cols, rows).data;
       lum = new Float32Array(cols * rows);
+      alpha = new Float32Array(cols * rows);
       for (let i = 0; i < cols * rows; i++) {
-        lum[i] = (0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]) / 255;
+        alpha[i] = d[i * 4 + 3] / 255;
+        lum[i] = Math.pow((0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]) / 255, gamma);
       }
       draw();
     };
-    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+    img.src = src ?? "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg ?? "");
 
     function draw() {
       if (!lum || !ctx || !canvas) return;
@@ -64,10 +78,15 @@ export function Dither({ svg, cols, rows, className, interactive, label }: Props
       const ch = h / rows;
       const ink = getComputedStyle(canvas).getPropertyValue("--ink").trim() || "#222";
       ctx.fillStyle = ink;
+      const dark = document.documentElement.dataset.theme === "dark";
       const size = Math.max(1, Math.min(cw, ch) * 0.82);
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
-          let v = lum[y * cols + x];
+          const idx = y * cols + x;
+          if (photo && alpha![idx] < 0.5) continue;
+          let v = lum[idx];
+          // в темной теме светлое лицо становится плотными светлыми точками, а темным местам оставляем немного точек, чтобы силуэт не пропадал
+          if (photo && dark) v = Math.min(1 - v, 0.8);
           if (mouse) {
             const dx = (x - mouse.x) / cols;
             const dy = (y - mouse.y) / rows;
@@ -111,7 +130,7 @@ export function Dither({ svg, cols, rows, className, interactive, label }: Props
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("pointerleave", onLeave);
     };
-  }, [svg, cols, rows, interactive]);
+  }, [svg, src, fit, gamma, photo, cols, rows, interactive]);
 
   return <canvas ref={ref} role="img" aria-label={label} className={className} />;
 }

@@ -5,15 +5,20 @@ import { books } from "../books";
 import { sortedProjects } from "../projects";
 import { href } from "../router";
 import { sound } from "../sound";
-import { heroArt } from "../ui/art";
+import { Logo } from "../ui/Logo";
 import { Dither } from "../ui/Dither";
 import { ProjectRow } from "../ui/ProjectRow";
 import { SectionLabel } from "../ui/Section";
 import { Shelf } from "../ui/Shelf";
 
-const roles = ["canvas-редактор", "дизайн-систему", "e2e-тесты"];
+// Сменяющийся чип: ширина подстраивается под слово, у каждого слова свой цвет
+const roles = [
+  { text: "canvas-редактор", hue: 42 },
+  { text: "дизайн-систему", hue: 285 },
+  { text: "e2e-тесты", hue: 150 },
+  { text: "бэкенд на C#", hue: 250 },
+];
 
-// Сменяющееся слово в приветствии, как чипы на thejenja
 function Rotating() {
   const reduce = useReducedMotion();
   const [i, setI] = useState(0);
@@ -22,31 +27,36 @@ function Rotating() {
     const id = setInterval(() => setI((v) => (v + 1) % roles.length), 2600);
     return () => clearInterval(id);
   }, [reduce]);
+  const r = roles[i];
   return (
-    <span className="relative inline-grid align-baseline">
-      {/* невидимая самая длинная строка держит ширину */}
-      <span className="invisible col-start-1 row-start-1 px-1.5">{roles.reduce((a, b) => (b.length > a.length ? b : a))}</span>
-      <AnimatePresence mode="wait" initial={false}>
+    <motion.span
+      layout
+      transition={{ layout: { duration: 0.35, ease: [0.16, 1, 0.3, 1] } }}
+      className="inline-flex overflow-hidden rounded-[6px] px-1.5 align-baseline"
+      style={{ backgroundColor: `oklch(0.66 0.16 ${r.hue} / 0.14)`, color: `oklch(0.52 0.16 ${r.hue})` }}
+    >
+      <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
-          key={roles[i]}
-          initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
+          key={r.text}
+          layout="position"
+          initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -6, filter: "blur(4px)" }}
-          transition={{ duration: 0.35 }}
-          className="col-start-1 row-start-1 rounded-[5px] bg-accent-soft px-1.5 text-accent-ink"
+          exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+          transition={{ duration: 0.3 }}
+          className="whitespace-nowrap"
         >
-          {roles[i]}
+          {r.text}
         </motion.span>
       </AnimatePresence>
-    </span>
+    </motion.span>
   );
 }
 
-const experience = [
-  { company: "PIX Robotics", role: "Middle Fullstack-разработчик", years: "2024 - сейчас" },
-  { company: "PIX Robotics", role: "Junior Fullstack-разработчик", years: "2023 - 2024" },
+const experience: { company: string; role: string; years: string; logo?: "pix" | "virtuum"; site?: string; muted?: boolean }[] = [
+  { company: "PIX Robotics", role: "Middle Fullstack-разработчик", years: "2024 - сейчас", logo: "pix", site: "https://pixrobotics.com" },
+  { company: "PIX Robotics", role: "Junior Fullstack-разработчик", years: "2023 - 2024", logo: "pix", site: "https://pixrobotics.com" },
   { company: "Срочная служба", role: "армия", years: "2022 - 2023", muted: true },
-  { company: "ВиртуумЛаб", role: "Инженер-программист", years: "2021 - 2022" },
+  { company: "ВиртуумЛаб", role: "Инженер-программист", years: "2021 - 2022", logo: "virtuum", site: "https://virtuumlab.ru" },
 ];
 
 function Tile({ to, title, note, art }: { to: string; title: string; note: string; art: string }) {
@@ -107,7 +117,15 @@ export function Home() {
             </p>
           </div>
         </div>
-        <Dither svg={heroArt} cols={96} rows={96} interactive label="Процессная карта, нарисованная точками" className="aspect-square w-full max-w-[230px] max-sm:mx-auto max-sm:max-w-[200px]" />
+        <Dither
+          src={`${import.meta.env.BASE_URL}portrait.png`}
+          photo
+          cols={150}
+          rows={150}
+          interactive
+          label="Портрет Виталия, нарисованный точками"
+          className="aspect-square w-full max-w-[240px] max-sm:mx-auto max-sm:max-w-[220px]"
+        />
       </header>
 
       <nav aria-label="Разделы" className="-mx-4 mt-12 grid grid-cols-3 border-y border-line sm:-mx-6">
@@ -121,9 +139,20 @@ export function Home() {
         <ul className="mt-5 border-t border-line">
           {experience.map((e) => (
             <li key={e.years} className="flex items-start justify-between gap-4 border-b border-line py-3.5">
-              <div>
-                <div className={`font-medium ${e.muted ? "text-ink-2" : ""}`}>{e.company}</div>
-                <div className="text-[13.5px] text-ink-3">{e.role}</div>
+              <div className="flex gap-3">
+                <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-[7px] border border-line bg-surface text-ink">
+                  {e.logo ? <Logo name={e.logo} className={e.logo === "pix" ? "h-3.5 w-5" : "h-5 w-3"} /> : <span className="h-1.5 w-1.5 rounded-full bg-ink-3" />}
+                </span>
+                <div>
+                  {e.site ? (
+                    <a href={e.site} target="_blank" rel="noreferrer" className="link font-medium no-underline hover:underline">
+                      {e.company} <span className="text-ink-3">↗</span>
+                    </a>
+                  ) : (
+                    <div className={`font-medium ${e.muted ? "text-ink-2" : ""}`}>{e.company}</div>
+                  )}
+                  <div className="text-[13.5px] text-ink-3">{e.role}</div>
+                </div>
               </div>
               <div className="shrink-0 font-mono text-[12.5px] text-ink-3 tabular-nums">{e.years}</div>
             </li>

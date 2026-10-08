@@ -1,6 +1,7 @@
 // Проекты: рабочие задачи, разложенные как кейсы. Факты из материалов по карьере, без внутренних цифр PIX.
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
+export type Logo = "pix" | "virtuum" | "kosmo" | "robozon";
 export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm";
 
 export type Project = {
@@ -10,7 +11,7 @@ export type Project = {
   company: Company;
   date: string; // как показывать
   sort: number; // для порядка: yyyymm
-  icon: string; // имя иконки из набора в Icons.tsx
+  logo: Logo;
   stack: string[];
   result?: string; // главный итог одной строкой
   sections: { title: string; text: string; diagram?: DiagramKey }[];
@@ -24,7 +25,7 @@ export const projects: Project[] = [
     company: "Хакатон",
     date: "сен 2026",
     sort: 202609,
-    icon: "rocket",
+    logo: "kosmo",
     stack: ["C#/.NET", "React", "DES"],
     result: "1 место, Роскосмос и МИРЭА",
     sections: [
@@ -49,7 +50,7 @@ export const projects: Project[] = [
     company: "Хакатон",
     date: "сен 2026",
     sort: 202608,
-    icon: "package",
+    logo: "robozon",
     stack: ["C#/.NET", "React", "three.js", "Gym"],
     result: "2 место из 3600+ участников",
     sections: [
@@ -74,7 +75,7 @@ export const projects: Project[] = [
     company: "PIX Robotics",
     date: "2025-2026",
     sort: 202607,
-    icon: "arrow",
+    logo: "pix",
     stack: ["@xyflow/react", "TypeScript", "миграция данных"],
     result: "Карта на 1000 элементов открывается за 1,7 с вместо падения вкладки, памяти уходит в 2,5-3 раза меньше",
     sections: [
@@ -100,7 +101,7 @@ export const projects: Project[] = [
     company: "PIX Robotics",
     date: "2025",
     sort: 202506,
-    icon: "flow",
+    logo: "pix",
     stack: ["React", "@xyflow/react", "CQRS", "SignalR"],
     sections: [
       {
@@ -127,7 +128,7 @@ export const projects: Project[] = [
     company: "PIX Robotics",
     date: "2026",
     sort: 202602,
-    icon: "check",
+    logo: "pix",
     stack: ["Playwright", "TypeScript", "Page Objects"],
     result: "~200 полноценных сценариев",
     sections: [
@@ -148,7 +149,7 @@ export const projects: Project[] = [
     company: "PIX Robotics",
     date: "2025",
     sort: 202504,
-    icon: "stack",
+    logo: "pix",
     stack: ["Ant Design 5", "SVGO", "SVGR", "GitLab Registry"],
     result: "Пакеты используют 2 из 4 продуктов компании",
     sections: [
@@ -170,7 +171,7 @@ export const projects: Project[] = [
     company: "PIX Robotics",
     date: "2025",
     sort: 202503,
-    icon: "image",
+    logo: "pix",
     stack: ["C#", "PuppeteerSharp", "headless Chromium"],
     sections: [
       {
@@ -194,7 +195,7 @@ export const projects: Project[] = [
     company: "PIX Robotics",
     date: "2025",
     sort: 202506,
-    icon: "robot",
+    logo: "pix",
     stack: ["React", "стриминг", "Semantic Kernel"],
     sections: [
       {
@@ -210,7 +211,7 @@ export const projects: Project[] = [
     company: "PIX Robotics",
     date: "2024",
     sort: 202410,
-    icon: "database",
+    logo: "pix",
     stack: ["C#", "PostgreSQL", "Npgsql"],
     result: "10 млн строк примерно за минуту",
     sections: [
@@ -231,7 +232,7 @@ export const projects: Project[] = [
     company: "ВиртуумЛаб",
     date: "2021-2022",
     sort: 202112,
-    icon: "receipt",
+    logo: "virtuum",
     stack: ["React", "TypeScript", "Redux", "C#"],
     sections: [
       {
@@ -252,7 +253,7 @@ export const projects: Project[] = [
     company: "ВиртуумЛаб",
     date: "2022",
     sort: 202203,
-    icon: "chart",
+    logo: "virtuum",
     stack: ["C#", ".NET 6", "PostgreSQL", "React"],
     sections: [
       {

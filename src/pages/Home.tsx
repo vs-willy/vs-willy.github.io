@@ -6,6 +6,7 @@ import { sortedProjects } from "../projects";
 import { href } from "../router";
 import { sound } from "../sound";
 import { Logo } from "../ui/Logo";
+import { ShieldStar } from "@phosphor-icons/react";
 import { Dither } from "../ui/Dither";
 import { ProjectRow } from "../ui/ProjectRow";
 import { SectionLabel } from "../ui/Section";
@@ -141,7 +142,7 @@ export function Home() {
             <li key={e.years} className="flex items-start justify-between gap-4 border-b border-line py-3.5">
               <div className="flex gap-3">
                 <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-[7px] border border-line bg-surface text-ink">
-                  {e.logo ? <Logo name={e.logo} className={e.logo === "pix" ? "h-3.5 w-5" : "h-5 w-3"} /> : <span className="h-1.5 w-1.5 rounded-full bg-ink-3" />}
+                  {e.logo ? <Logo name={e.logo} className={e.logo === "pix" ? "h-3.5 w-5" : "h-5 w-3"} /> : <ShieldStar size={16} weight="duotone" className="text-ink-2" />}
                 </span>
                 <div>
                   {e.site ? (

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 
 // Растрирует SVG в пиксельный дизеринг (матрица Байера 4x4), как точечные картинки на cali.so.
+// Фото растрируется диффузией ошибки Аткинсона: Байер съедает полутона, и лицо превращается в пятна.
 // Цвет точек берется из токена --ink, поэтому картинка сама подстраивается под тему.
 // С interactive курсор работает как фонарик: рядом с ним картинка проявляется плотнее.
 
@@ -80,13 +81,13 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
       ctx.fillStyle = ink;
       const dark = document.documentElement.dataset.theme === "dark";
       const size = Math.max(1, Math.min(cw, ch) * 0.82);
+      const err = photo ? new Float32Array(cols * rows) : null;
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           const idx = y * cols + x;
-          if (photo && alpha![idx] < 0.02) continue;
           let v = lum[idx];
           // в темной теме светлое лицо становится плотными светлыми точками, а темным местам оставляем немного точек, чтобы силуэт не пропадал
-          if (photo && dark) v = Math.min(1 - v, 0.8);
+          if (photo && dark) v = Math.min(1 - v, 0.85);
           // полупрозрачные края фото дают меньше точек: портрет плавно растворяется
           if (photo) v = 1 - (1 - v) * alpha![idx];
           if (mouse) {
@@ -95,9 +96,24 @@ export function Dither({ svg, src, fit = 1, gamma = 1, photo, cols, rows, classN
             const k = Math.exp(-(dx * dx + dy * dy) * 28);
             v = v - k * 0.28 * (1 - v) - k * 0.12;
           }
-          if (1 - v > BAYER[(y % 4) * 4 + (x % 4)]) {
-            ctx.fillRect(x * cw + (cw - size) / 2, y * ch + (ch - size) / 2, size, size);
+          let on: boolean;
+          if (err) {
+            const old = v + err[idx];
+            on = old < 0.5;
+            const e = (old - (on ? 0 : 1)) / 8;
+            if (x + 1 < cols) err[idx + 1] += e;
+            if (x + 2 < cols) err[idx + 2] += e;
+            if (y + 1 < rows) {
+              if (x > 0) err[idx + cols - 1] += e;
+              err[idx + cols] += e;
+              if (x + 1 < cols) err[idx + cols + 1] += e;
+            }
+            if (y + 2 < rows) err[idx + 2 * cols] += e;
+            if (alpha![idx] < 0.02) on = false;
+          } else {
+            on = 1 - v > BAYER[(y % 4) * 4 + (x % 4)];
           }
+          if (on) ctx.fillRect(x * cw + (cw - size) / 2, y * ch + (ch - size) / 2, size, size);
         }
       }
     }

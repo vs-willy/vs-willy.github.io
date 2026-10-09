@@ -12,6 +12,7 @@ import { PortraitFx } from "../ui/PortraitFx";
 import { ProjectRow } from "../ui/ProjectRow";
 import { SectionLabel } from "../ui/Section";
 import { Shelf } from "../ui/Shelf";
+import { nb } from "../typo";
 
 // Сменяющийся чип: ширина подстраивается под слово, у каждого слова свой цвет
 const roles = [
@@ -100,12 +101,12 @@ export function Home() {
           </div>
           <div className="mt-5 space-y-4 leading-[1.65] text-ink-2">
             <p>
-              Я fullstack-разработчик с упором во фронт. Сейчас в PIX Robotics отвечаю за <Rotating />
+              Я fullstack-разработчик с упором во фронт. Сейчас в PIX Robotics отвечаю <span className="whitespace-nowrap">за <Rotating /></span>
             </p>
-            <p>Пишу на React и TypeScript, а когда браузера не хватает, сам делаю бэкенд на C#/.NET. Больше всего люблю сложные интерфейсы, где важны архитектура и скорость.</p>
-            <p>Ищу команду с редакторами, графами или внутренними инструментами. Москва, офис или гибрид, а также удаленка и релокация.</p>
+            <p>{nb("Пишу на React и TypeScript, а когда браузера не хватает, сам делаю бэкенд на C#/.NET. Больше всего люблю сложные интерфейсы, где важны архитектура и скорость.")}</p>
+            <p>{nb("Ищу команду с редакторами, графами или внутренними инструментами. Москва, офис или гибрид, а также удаленка и релокация.")}</p>
             <p>
-              Пишите в{" "}
+              Пишите в{"\u00A0"}
               <a className="link text-ink" href={contacts.telegram.href} target="_blank" rel="noreferrer">
                 Telegram ↗
               </a>
@@ -113,7 +114,7 @@ export function Home() {
               <a className="link text-ink" href={contacts.github.href} target="_blank" rel="noreferrer">
                 GitHub ↗
               </a>{" "}
-              или на почту{" "}
+              или на{"\u00A0"}почту{" "}
               <a className="link text-ink" href={contacts.email.href}>
                 {contacts.email.label}
               </a>
@@ -133,33 +134,32 @@ export function Home() {
         <Tile to={href.books} title="Книги" note={books.length ? `${books.length} книг` : "скоро"} art={tileArt.books} />
       </nav>
 
-      <section className="mt-16">
+      <section className="section">
         <SectionLabel n="01">Опыт</SectionLabel>
-        <ul className="mt-5 border-t border-line">
+        <ul className="mt-4">
           {experience.map((e) => (
-            <li key={e.years} className="flex items-start justify-between gap-4 border-b border-line py-3.5">
-              <div className="flex gap-3">
-                <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-[7px] border border-line bg-surface text-ink">
-                  {e.logo ? <Logo name={e.logo} className={e.logo === "pix" ? "h-3.5 w-5" : "h-5 w-3"} /> : <ShieldStar size={16} weight="duotone" className="text-ink-2" />}
-                </span>
-                <div>
-                  {e.site ? (
-                    <a href={e.site} target="_blank" rel="noreferrer" className="link font-medium no-underline hover:underline">
-                      {e.company} <span className="text-ink-3">↗</span>
-                    </a>
-                  ) : (
-                    <div className={`font-medium ${e.muted ? "text-ink-2" : ""}`}>{e.company}</div>
-                  )}
-                  <div className="text-[13.5px] text-ink-3">{e.role}</div>
-                </div>
+            <li key={e.years} className="flex items-start gap-3 py-2.5">
+              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-[7px] border border-line bg-surface text-ink">
+                {e.logo ? <Logo name={e.logo} className={e.logo === "pix" ? "h-3.5 w-5" : "h-5 w-3"} /> : <ShieldStar size={16} weight="duotone" className="text-ink-2" />}
+              </span>
+              <div className="min-w-0">
+                {e.site ? (
+                  <a href={e.site} target="_blank" rel="noreferrer" className="link font-medium no-underline hover:underline">
+                    {e.company} <span className="text-ink-3">↗</span>
+                  </a>
+                ) : (
+                  <div className={`font-medium ${e.muted ? "text-ink-2" : ""}`}>{e.company}</div>
+                )}
+                <div className="text-[13.5px] text-ink-3">{nb(e.role)}</div>
               </div>
-              <div className="shrink-0 font-mono text-[12.5px] text-ink-3 tabular-nums">{e.years}</div>
+              <span aria-hidden className="leader mx-1! mt-[13px]!" />
+              <div className="mt-0.5 shrink-0 font-mono text-[12.5px] text-ink-3 tabular-nums">{e.years}</div>
             </li>
           ))}
         </ul>
       </section>
 
-      <section className="mt-16">
+      <section className="section">
         <SectionLabel
           n="02"
           aside={
@@ -170,14 +170,14 @@ export function Home() {
         >
           Проекты
         </SectionLabel>
-        <ul className="mt-5 border-t border-line">
+        <ul className="mt-4">
           {sortedProjects.slice(0, 6).map((p) => (
             <ProjectRow key={p.slug} p={p} />
           ))}
         </ul>
       </section>
 
-      <section className="mt-16">
+      <section className="section">
         <SectionLabel n="03">Стек</SectionLabel>
         <div className="mt-5 space-y-4">
           {stack.map((g) => (
@@ -189,22 +189,26 @@ export function Home() {
         </div>
       </section>
 
-      <section className="mt-16">
+      <section className="section">
         <SectionLabel n="04">Учеба</SectionLabel>
-        <ul className="mt-5 border-t border-line">
+        <ul className="mt-4">
           {education.map((e) => (
-            <li key={e.title} className="border-b border-line py-3.5">
-              <div className="font-medium">{e.title}</div>
-              <div className="text-[13.5px] text-ink-3">{e.detail}</div>
+            <li key={e.title} className="flex items-start gap-3 py-2.5">
+              <div className="min-w-0">
+                <div className="font-medium">{nb(e.title)}</div>
+                <div className="text-[13.5px] text-ink-3">{nb(e.detail)}</div>
+              </div>
+              <span aria-hidden className="leader mx-1! mt-[13px]!" />
+              <div className="mt-0.5 shrink-0 font-mono text-[12.5px] text-ink-3 tabular-nums">{e.years}</div>
             </li>
           ))}
         </ul>
       </section>
 
       {books.length > 0 && (
-        <section className="mt-16">
+        <section className="section">
           <SectionLabel n="05">Книги</SectionLabel>
-          <p className="mt-4 text-[14.5px] text-ink-2">Книги, которые мне понравились и которые я советую.</p>
+          <p className="mt-4 text-[14.5px] text-ink-2">{nb("Книги, которые мне понравились и которые я советую.")}</p>
           <div className="mt-6">
             <Shelf />
           </div>

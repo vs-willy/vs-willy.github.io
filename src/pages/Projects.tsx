@@ -39,7 +39,7 @@ export function Projects() {
       {[...groups].map(([year, items]) => (
         <section key={year} className="mt-10">
           <h2 className="font-mono text-[12.5px] text-ink-3">{year}</h2>
-          <ul className="mt-2 border-t border-line">
+          <ul className="mt-1">
             {items.map((p) => (
               <ProjectRow key={p.slug} p={p} />
             ))}

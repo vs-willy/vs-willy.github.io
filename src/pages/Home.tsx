@@ -204,6 +204,7 @@ export function Home() {
       {books.length > 0 && (
         <section className="mt-16">
           <SectionLabel n="05">Книги</SectionLabel>
+          <p className="mt-4 text-[14.5px] text-ink-2">Книги, которые мне понравились и которые я советую.</p>
           <div className="mt-6">
             <Shelf />
           </div>

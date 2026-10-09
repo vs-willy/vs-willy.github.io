@@ -90,13 +90,14 @@ export function Home() {
     <div className="fade-up">
       <header className="grid gap-8 sm:grid-cols-[1fr_230px] sm:gap-8">
         <div>
-          <h1 className="flex items-center gap-2 text-[17px] font-semibold">
-            Виталий Иванов
-            <span aria-hidden className="flex gap-0.5">
-              <span className="h-2 w-2 bg-accent" />
-              <span className="h-2 w-2 bg-line-strong" />
+          <h1 className="text-[17px] font-semibold">Виталий Иванов</h1>
+          <div className="mt-1.5 inline-flex items-center gap-2 text-[13px] text-ink-3">
+            <span className="relative flex h-2 w-2" aria-hidden>
+              <span className="absolute inline-flex h-full w-full rounded-full bg-[oklch(0.72_0.17_150)] opacity-60 motion-safe:animate-ping" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[oklch(0.68_0.17_150)]" />
             </span>
-          </h1>
+            Открыт к предложениям
+          </div>
           <div className="mt-5 space-y-4 leading-[1.65] text-ink-2">
             <p>
               Я fullstack-разработчик с упором во фронт. Сейчас в PIX Robotics отвечаю за <Rotating />

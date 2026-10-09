@@ -163,7 +163,7 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
     function step() {
       let moving = false;
       if (fx === "repel") {
-        const R = n * (mouse.touch ? 0.12 : 0.075);
+        const R = n * (mouse.touch ? 0.06 : 0.0375);
         // после тапа точки возвращаются медленнее, чтобы взрыв успели увидеть
         const spring = mouse.touch ? 0.03 : 0.06;
         const damp = mouse.touch ? 0.88 : 0.82;
@@ -224,7 +224,7 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
     const onDown = (e: PointerEvent) => {
       onMove(e);
       if (fx !== "repel" || e.pointerType === "mouse") return;
-      const R = n * 0.26;
+      const R = n * 0.13;
       for (let i = 0; i < count; i++) {
         const dx = px[i] + ox[i] - mouse.x;
         const dy = py[i] + oy[i] - mouse.y;

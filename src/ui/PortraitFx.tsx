@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { sound } from "../sound";
 
 // Портрет из точек (дизеринг Аткинсона) с одним из трех эффектов при наведении:
 // repel — точки разбегаются от курсора и пружинят обратно,
@@ -52,6 +53,7 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
 
     // touch: палец закрывает маленький радиус, поэтому для касаний он больше
     const mouse = { x: 0, y: 0, in: false, touch: false };
+    let burstAt = -1e9; // время последнего клика или тапа
     const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
     const lens = { x: 0, y: 0, r: 0, tr: 0 };
 
@@ -165,8 +167,9 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
       if (fx === "repel") {
         const R = n * (mouse.touch ? 0.06 : 0.055);
         // после тапа точки возвращаются медленнее, чтобы взрыв успели увидеть
-        const spring = mouse.touch ? 0.03 : 0.06;
-        const damp = mouse.touch ? 0.88 : 0.82;
+        const slow = mouse.touch || performance.now() - burstAt < 900;
+        const spring = slow ? 0.03 : 0.06;
+        const damp = slow ? 0.88 : 0.82;
         for (let i = 0; i < count; i++) {
           let fxv = -ox[i] * spring;
           let fyv = -oy[i] * spring;
@@ -220,10 +223,12 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
       lens.tr = n * 0.2;
       kick();
     };
-    // на тап точки разлетаются от пальца и потом пружинят обратно
+    // на клик или тап точки разлетаются и потом пружинят обратно
     const onDown = (e: PointerEvent) => {
       onMove(e);
-      if (fx !== "repel" || e.pointerType === "mouse") return;
+      if (fx !== "repel") return;
+      burstAt = performance.now();
+      if (e.pointerType === "mouse") sound.click();
       const R = n * 0.13;
       for (let i = 0; i < count; i++) {
         const dx = px[i] + ox[i] - mouse.x;

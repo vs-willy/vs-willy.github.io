@@ -129,3 +129,171 @@ body {
     animation: none;
   }
 }
+
+/* Полка с книгами, по мотивам cali.so */
+.room-shelf {
+  --shelf-shadow: 27 22 17;
+  --wood-front-bottom: #9f7b5a;
+  --wood-front-top: #ceb698;
+  --wood-grain: #472a1114;
+  --wood-top-back: #c6b195;
+  --wood-top-front: #d9c8ae;
+  position: relative;
+}
+[data-theme="dark"] .room-shelf {
+  --shelf-shadow: 0 0 0;
+  --wood-front-bottom: #3a261c;
+  --wood-front-top: #614b3a;
+  --wood-grain: #00000026;
+  --wood-top-back: #513e30;
+  --wood-top-front: #6a5747;
+}
+.room-shelf-plank {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 12px;
+  border-radius: 1px 1px 2px 2px;
+  background:
+    linear-gradient(92deg, transparent 0 8%, var(--wood-grain) 14%, transparent 22% 54%, var(--wood-grain) 61%, transparent 72%),
+    linear-gradient(180deg, var(--wood-front-top), var(--wood-front-bottom));
+  box-shadow:
+    inset 0 1px 0 #ffffff47,
+    inset 0 -1px 0 #331c0a33,
+    1px 3px 3px -2px rgb(var(--shelf-shadow) / 0.24),
+    3px 10px 16px -8px rgb(var(--shelf-shadow) / 0.34),
+    6px 24px 34px -18px rgb(var(--shelf-shadow) / 0.28);
+}
+.room-shelf-plank::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -6px;
+  height: 6px;
+  clip-path: polygon(0.8% 0, 99.2% 0, 100% 100%, 0 100%);
+  background:
+    linear-gradient(91deg, transparent 0 16%, var(--wood-grain) 25%, transparent 34% 67%, var(--wood-grain) 75%, transparent 83%),
+    linear-gradient(180deg, var(--wood-top-front), var(--wood-top-back));
+  box-shadow: rgba(255, 255, 255, 0.32) 0 1px inset;
+}
+[data-theme="dark"] .room-shelf-plank {
+  box-shadow:
+    inset 0 1px 0 #ffffff1a,
+    inset 0 -1px 0 #0000007a,
+    3px 10px 16px -8px rgb(0 0 0 / 0.62);
+}
+.book-frame {
+  position: relative;
+  flex-shrink: 0;
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.book-shadow {
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 9px;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgb(var(--shelf-shadow) / 0.36) 0%, rgb(var(--shelf-shadow) / 0.14) 48%, transparent 84%);
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.book {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  perspective: 1200px;
+  transition: transform 0.18s ease;
+}
+.book[aria-pressed="false"] {
+  cursor: pointer;
+}
+@media (hover: hover) and (pointer: fine) {
+  .book[data-hover] {
+    transform: translateY(-5px);
+  }
+}
+.book:focus-visible {
+  outline: 1px solid var(--ink-3);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+.book-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  transform-style: preserve-3d;
+  transform-origin: 0 center;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.book-cover {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 2px 4px 4px 2px;
+  backface-visibility: hidden;
+  box-shadow:
+    0 0 0 0.5px #00000017,
+    1px 2px 3px -1px rgb(var(--shelf-shadow) / 0.2),
+    4px 9px 16px -9px rgb(var(--shelf-shadow) / 0.3);
+}
+.book-cover img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* легкий блик у переплета, чтобы обложка выглядела книгой, а не картинкой */
+.book-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, #00000026, #ffffff1a 3%, transparent 7%);
+}
+.book-spine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.625rem 0;
+  border-radius: 2px;
+  transform-origin: 0 center;
+  transform: rotateY(-90deg);
+  backface-visibility: hidden;
+  background-image: linear-gradient(to right, #0000001f, transparent 35%, #ffffff1f 75%, #00000014) !important;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08);
+}
+.book-spine-title {
+  flex: 1 1 0%;
+  min-height: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  writing-mode: vertical-rl;
+  font-size: 0.66rem;
+  font-weight: 600;
+}
+.book-spine-author {
+  flex: none;
+  writing-mode: vertical-rl;
+  white-space: nowrap;
+  font-size: 0.5rem;
+  opacity: 0.72;
+}
+@media (prefers-reduced-motion: reduce) {
+  .book-frame,
+  .book-shadow,
+  .book-inner,
+  .book {
+    transition: none;
+  }
+}

@@ -12,6 +12,7 @@ import { PortraitFx } from "../ui/PortraitFx";
 import { ProjectRow } from "../ui/ProjectRow";
 import { SectionLabel } from "../ui/Section";
 import { Shelf } from "../ui/Shelf";
+import { Weather } from "../ui/Weather";
 import { nb } from "../typo";
 
 // Сменяющийся чип: ширина подстраивается под слово, у каждого слова свой цвет
@@ -92,12 +93,8 @@ export function Home() {
       <header className="grid gap-8 sm:grid-cols-[1fr_230px] sm:gap-8">
         <div>
           <h1 className="text-[17px] font-semibold">Виталий Иванов</h1>
-          <div className="mt-1.5 inline-flex items-center gap-2 text-[13px] text-ink-3">
-            <span className="relative flex h-2 w-2" aria-hidden>
-              <span className="absolute inline-flex h-full w-full rounded-full bg-[oklch(0.72_0.17_150)] opacity-60 motion-safe:animate-ping" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-[oklch(0.68_0.17_150)]" />
-            </span>
-            Открыт к предложениям
+          <div className="mt-1.5 h-5 text-[13px] text-ink-3">
+            <Weather />
           </div>
           <div className="mt-5 space-y-4 leading-[1.65] text-ink-2">
             <p>

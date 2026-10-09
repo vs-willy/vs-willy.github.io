@@ -8,6 +8,7 @@ import { sound } from "../sound";
 import { Logo } from "../ui/Logo";
 import { ShieldStar } from "@phosphor-icons/react";
 import { Dither } from "../ui/Dither";
+import { PortraitFx } from "../ui/PortraitFx";
 import { ProjectRow } from "../ui/ProjectRow";
 import { SectionLabel } from "../ui/Section";
 import { Shelf } from "../ui/Shelf";
@@ -118,13 +119,8 @@ export function Home() {
             </p>
           </div>
         </div>
-        <Dither
-          src={`${import.meta.env.BASE_URL}portrait.png`}
-          photo
-          cols={190}
-          rows={190}
-          interactive
-          lens
+        <PortraitFx
+          fx="repel"
           label="Портрет Виталия, нарисованный точками"
           className="aspect-square w-full max-w-[240px] max-sm:mx-auto max-sm:max-w-[220px]"
         />

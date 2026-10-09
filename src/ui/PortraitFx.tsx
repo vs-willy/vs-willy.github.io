@@ -162,7 +162,7 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
     function step() {
       let moving = false;
       if (fx === "repel") {
-        const R = n * 0.13;
+        const R = n * 0.075;
         for (let i = 0; i < count; i++) {
           let fxv = -ox[i] * 0.06;
           let fyv = -oy[i] * 0.06;
@@ -171,7 +171,7 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
             const dy = py[i] + oy[i] - mouse.y;
             const d = Math.hypot(dx, dy);
             if (d < R && d > 0.001) {
-              const f = (1 - d / R) ** 2 * 2.2;
+              const f = (1 - d / R) ** 2 * 1.8;
               fxv += (dx / d) * f;
               fyv += (dy / d) * f;
             }

@@ -50,7 +50,8 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
     let vy = new Float32Array(0);
     let count = 0;
 
-    const mouse = { x: 0, y: 0, in: false };
+    // touch: палец закрывает маленький радиус, поэтому для касаний он больше
+    const mouse = { x: 0, y: 0, in: false, touch: false };
     const tilt = { x: 0, y: 0, tx: 0, ty: 0 };
     const lens = { x: 0, y: 0, r: 0, tr: 0 };
 
@@ -162,10 +163,13 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
     function step() {
       let moving = false;
       if (fx === "repel") {
-        const R = n * 0.075;
+        const R = n * (mouse.touch ? 0.12 : 0.075);
+        // после тапа точки возвращаются медленнее, чтобы взрыв успели увидеть
+        const spring = mouse.touch ? 0.03 : 0.06;
+        const damp = mouse.touch ? 0.88 : 0.82;
         for (let i = 0; i < count; i++) {
-          let fxv = -ox[i] * 0.06;
-          let fyv = -oy[i] * 0.06;
+          let fxv = -ox[i] * spring;
+          let fyv = -oy[i] * spring;
           if (mouse.in) {
             const dx = px[i] + ox[i] - mouse.x;
             const dy = py[i] + oy[i] - mouse.y;
@@ -176,8 +180,8 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
               fyv += (dy / d) * f;
             }
           }
-          vx[i] = (vx[i] + fxv) * 0.82;
-          vy[i] = (vy[i] + fyv) * 0.82;
+          vx[i] = (vx[i] + fxv) * damp;
+          vy[i] = (vy[i] + fyv) * damp;
           ox[i] += vx[i];
           oy[i] += vy[i];
           if (!moving && (Math.abs(vx[i]) > 0.01 || Math.abs(vy[i]) > 0.01 || Math.abs(ox[i]) > 0.05)) moving = true;
@@ -205,6 +209,7 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
       const r = canvas.getBoundingClientRect();
       mouse.x = ((e.clientX - r.left) / r.width) * n;
       mouse.y = ((e.clientY - r.top) / r.height) * n;
+      mouse.touch = e.pointerType !== "mouse";
       if (fx === "color" && !mouse.in) {
         lens.x = mouse.x;
         lens.y = mouse.y;
@@ -215,6 +220,22 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
       lens.tr = n * 0.2;
       kick();
     };
+    // на тап точки разлетаются от пальца и потом пружинят обратно
+    const onDown = (e: PointerEvent) => {
+      onMove(e);
+      if (fx !== "repel" || e.pointerType === "mouse") return;
+      const R = n * 0.26;
+      for (let i = 0; i < count; i++) {
+        const dx = px[i] + ox[i] - mouse.x;
+        const dy = py[i] + oy[i] - mouse.y;
+        const d = Math.hypot(dx, dy);
+        if (d < R && d > 0.001) {
+          const f = (1 - d / R) ** 0.6 * 3.4;
+          vx[i] += (dx / d) * f;
+          vy[i] += (dy / d) * f;
+        }
+      }
+    };
     const onLeave = () => {
       mouse.in = false;
       tilt.tx = 0;
@@ -222,11 +243,16 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
       lens.tr = 0;
       kick();
     };
+    // палец отпустили: у касаний нет наведения, поэтому эффект сразу отпускаем
+    const onUp = (e: PointerEvent) => {
+      if (e.pointerType !== "mouse") onLeave();
+    };
 
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (!reduce) {
       canvas.addEventListener("pointermove", onMove);
-      canvas.addEventListener("pointerdown", onMove);
+      canvas.addEventListener("pointerdown", onDown);
+      canvas.addEventListener("pointerup", onUp);
       canvas.addEventListener("pointerleave", onLeave);
       canvas.addEventListener("pointercancel", onLeave);
     }
@@ -251,11 +277,12 @@ export function PortraitFx({ fx, cols = 190, className, label }: Props) {
       ro.disconnect();
       mo.disconnect();
       canvas.removeEventListener("pointermove", onMove);
-      canvas.removeEventListener("pointerdown", onMove);
+      canvas.removeEventListener("pointerdown", onDown);
+      canvas.removeEventListener("pointerup", onUp);
       canvas.removeEventListener("pointerleave", onLeave);
       canvas.removeEventListener("pointercancel", onLeave);
     };
   }, [fx, cols]);
 
-  return <canvas ref={ref} role="img" aria-label={label} className={className} />;
+  return <canvas ref={ref} role="img" aria-label={label} className={className} style={{ touchAction: "none" }} />;
 }

@@ -27,7 +27,7 @@ export const books: Book[] = [
     author: "Игорь Манн",
     initials: "ИМ",
     cover: "number-one.jpg",
-    ratio: 357 / 600,
+    ratio: 405 / 600,
     color: "#a3863f",
     ink: "#fbf7ec",
     url: "https://www.mann-ivanov-ferber.ru/catalog/product/nomer_odin/",

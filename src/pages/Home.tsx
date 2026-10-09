@@ -121,8 +121,8 @@ export function Home() {
         <Dither
           src={`${import.meta.env.BASE_URL}portrait.png`}
           photo
-          cols={170}
-          rows={170}
+          cols={190}
+          rows={190}
           interactive
           lens
           label="Портрет Виталия, нарисованный точками"

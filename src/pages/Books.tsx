@@ -5,7 +5,7 @@ export function Books() {
   return (
     <div className="fade-up">
       <h1 className="text-[22px] font-semibold tracking-tight">Книги</h1>
-      <p className="mt-2 text-ink-2">Книги, которые повлияли на то, как я пишу код и думаю о продуктах.</p>
+      <p className="mt-2 text-ink-2">Книги, которые мне понравились и которые я советую.</p>
       <div className="mt-10">
         {books.length ? (
           <Shelf />

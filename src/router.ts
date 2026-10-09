@@ -1,12 +1,13 @@
 import { useSyncExternalStore } from "react";
 
 // Маршруты на хэше: GitHub Pages отдает только index.html, поэтому #/projects надежнее путей
-export type Route = { name: "home" } | { name: "projects" } | { name: "project"; slug: string } | { name: "books" };
+export type Route = { name: "home" } | { name: "projects" } | { name: "project"; slug: string } | { name: "books" } | { name: "lab" };
 
 function parse(hash: string): Route {
   const h = hash.replace(/^#\/?/, "");
   if (h === "projects") return { name: "projects" };
   if (h === "books") return { name: "books" };
+  if (h === "lab") return { name: "lab" };
   const m = h.match(/^projects\/([\w-]+)$/);
   if (m) return { name: "project", slug: m[1] };
   return { name: "home" };

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Books } from "./pages/Books";
 import { Home } from "./pages/Home";
+import { Lab } from "./pages/Lab";
 import { Project } from "./pages/Project";
 import { Projects } from "./pages/Projects";
 import { useRoute } from "./router";
@@ -23,6 +24,7 @@ export function App() {
           {route.name === "projects" && <Projects />}
           {route.name === "project" && <Project slug={route.slug} />}
           {route.name === "books" && <Books />}
+          {route.name === "lab" && <Lab />}
         </main>
         <div className="px-4 sm:px-6">
           <Footer />

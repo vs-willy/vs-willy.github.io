@@ -55,7 +55,7 @@ export function Dock() {
         <House size={18} />
       </Item>
       {sep}
-      <Item label="Проекты" href={href.projects} active={route.name === "projects" || route.name === "project"}>
+      <Item label="Проекты" href={href.projects} active={route.name === "projects" || route.name === "project" || route.name === "hackathons"}>
         <FolderSimple size={18} />
       </Item>
       <Item label="Книги" href={href.books} active={route.name === "books"}>

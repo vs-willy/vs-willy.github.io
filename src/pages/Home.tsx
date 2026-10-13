@@ -127,7 +127,7 @@ export function Home() {
 
       <nav aria-label="Разделы" className="-mx-4 mt-12 grid grid-cols-3 border-y border-line sm:-mx-6">
         <Tile to={href.projects} title="Проекты" note={`${sortedProjects.length} кейсов`} art={tileArt.projects} />
-        <Tile to={href.projects} title="Хакатоны" note={`${hackCount} призовых места`} art={tileArt.hack} />
+        <Tile to={href.hackathons} title="Хакатоны" note={`${hackCount} призовых места`} art={tileArt.hack} />
         <Tile to={href.books} title="Книги" note={books.length ? `${books.length} книг` : "скоро"} art={tileArt.books} />
       </nav>
 

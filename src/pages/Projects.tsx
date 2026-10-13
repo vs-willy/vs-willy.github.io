@@ -6,9 +6,10 @@ import { ProjectRow } from "../ui/ProjectRow";
 const filters: ("Все" | Company)[] = ["Все", "PIX Robotics", "ВиртуумЛаб", "Хакатон"];
 const filterLabel = (f: string) => (f === "Хакатон" ? "Хакатоны" : f);
 
-// Все проекты с фильтром по месту работы, сгруппированы по году
-export function Projects() {
-  const [f, setF] = useState<(typeof filters)[number]>("Все");
+// Все проекты с фильтром по месту работы, сгруппированы по году.
+// С плитки «Хакатоны» страница открывается сразу с фильтром по хакатонам.
+export function Projects({ initial = "Все" }: { initial?: (typeof filters)[number] }) {
+  const [f, setF] = useState<(typeof filters)[number]>(initial);
   const list = sortedProjects.filter((p) => f === "Все" || p.company === f);
   const groups = new Map<string, typeof list>();
   for (const p of list) {

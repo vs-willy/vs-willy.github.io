@@ -22,6 +22,7 @@ export function App() {
         <main className="px-4 pt-14 sm:px-6 sm:pt-20" key={key}>
           {route.name === "home" && <Home />}
           {route.name === "projects" && <Projects />}
+          {route.name === "hackathons" && <Projects initial="Хакатон" />}
           {route.name === "project" && <Project slug={route.slug} />}
           {route.name === "books" && <Books />}
           {route.name === "lab" && <Lab />}

@@ -119,7 +119,6 @@ export function Home() {
           </div>
         </div>
         <PortraitFx
-          fx="repel"
           label="Портрет Виталия, нарисованный точками"
           className="aspect-square w-full max-w-[240px] max-sm:mx-auto max-sm:max-w-[220px]"
         />

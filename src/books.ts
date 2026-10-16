@@ -80,6 +80,6 @@ export const books: Book[] = [
     ratio: 421 / 600,
     color: "#12aee3",
     ink: "#ffffff",
-    url: "https://www.litres.ru/book/lola-ekerstrem/lagom-sekret-shvedskogo-blagopoluchiya-26913901/",
+    url: "https://www.chitai-gorod.ru/product/lagom-sekret-shvedskogo-blagopoluchiya-2617833",
   },
 ];

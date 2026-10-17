@@ -1,22 +1,33 @@
 import { useSyncExternalStore } from "react";
 
-// Язык сайта. Выбирается так: ?lang=en в ссылке, потом сохраненный выбор, потом язык браузера.
+// Язык сайта. Порядок выбора: ?lang= в ссылке, потом ручной выбор из дока, потом языки браузера.
 // При переключении язык пишется в ссылку, чтобы ее можно было отправить уже на нужном языке.
 export type Lang = "ru" | "en";
 
-const RU_LIKE = ["ru", "uk", "be", "kk"];
+// Если в списке браузера нет ни русского, ни английского, русский получают близкие языки
+const RU_NEAR = ["uk", "be", "kk"];
+
+// Браузер отдает языки в порядке предпочтения пользователя (настройка «Языки»):
+// берем первый, который есть на сайте
+export function browserLang(list: readonly string[] = navigator.languages?.length ? navigator.languages : [navigator.language || "ru"]): Lang {
+  const codes = list.map((l) => l.slice(0, 2).toLowerCase());
+  for (const c of codes) {
+    if (c === "ru" || c === "en") return c;
+  }
+  return codes.some((c) => RU_NEAR.includes(c)) ? "ru" : "en";
+}
 
 function initial(): Lang {
   try {
     const q = new URLSearchParams(location.search).get("lang");
     if (q === "ru" || q === "en") return q;
+    // сохраняется только ручной выбор из дока, автоматический не запоминаем
     const saved = localStorage.getItem("lang");
     if (saved === "ru" || saved === "en") return saved;
   } catch {
     /* без хранилища решает браузер */
   }
-  const nav = (navigator.language || "ru").slice(0, 2).toLowerCase();
-  return RU_LIKE.includes(nav) ? "ru" : "en";
+  return browserLang();
 }
 
 let current: Lang = initial();

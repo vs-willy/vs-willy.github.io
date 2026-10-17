@@ -168,6 +168,17 @@ export function Home() {
               </a>
             </p>
             )}
+            <p>
+              <a
+                className="inline-flex items-center gap-1.5 rounded-full border border-line-strong px-3 py-1 text-[13.5px] text-ink transition hover:border-ink"
+                href={`${import.meta.env.BASE_URL}resume-${lang}.pdf`}
+                download={t(lang, "Виталий-Иванов-резюме.pdf", "Vitaly-Ivanov-CV.pdf")}
+                onMouseEnter={sound.hover}
+                onClick={sound.click}
+              >
+                {t(lang, "Резюме в PDF", "CV in PDF")} <span className="text-ink-3">↓</span>
+              </a>
+            </p>
           </div>
         </div>
         <PortraitFx

@@ -50,6 +50,7 @@ export function Footer() {
             <li><a className={linkCls} href={contacts.github.href} target="_blank" rel="noreferrer">GitHub ↗</a></li>
             <li><a className={linkCls} href={contacts.linkedin.href} target="_blank" rel="noreferrer">LinkedIn ↗</a></li>
             <li><a className={linkCls} href={contacts.email.href}>{contacts.email.label}</a></li>
+            <li><a className={linkCls} href={`${import.meta.env.BASE_URL}resume-${lang}.pdf`} download={t(lang, "Виталий-Иванов-резюме.pdf", "Vitaly-Ivanov-CV.pdf")}>{t(lang, "Резюме PDF ↓", "CV PDF ↓")}</a></li>
           </ul>
         </div>
         <div>

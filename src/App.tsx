@@ -3,6 +3,7 @@ import { Books } from "./pages/Books";
 import { Home } from "./pages/Home";
 import { Project } from "./pages/Project";
 import { Projects } from "./pages/Projects";
+import { Resume } from "./pages/Resume";
 import { useRoute } from "./router";
 import { Dock } from "./ui/Dock";
 import { Footer } from "./ui/Footer";
@@ -14,6 +15,9 @@ export function App() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [key]);
+
+  // резюме печатается в PDF, поэтому без колонки, дока и футера
+  if (route.name === "resume") return <Resume />;
 
   return (
     <>

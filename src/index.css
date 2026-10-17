@@ -316,3 +316,14 @@ body {
     padding-inline: 1.5rem;
   }
 }
+
+/* Печать резюме: лист A4 без полей, поля задает сама страница */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+  body {
+    background: #fff;
+  }
+}

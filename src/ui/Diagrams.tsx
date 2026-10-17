@@ -12,7 +12,7 @@ export function DesignSystemDiagram() {
   const px = 168;
   const pw = 152;
   return (
-    <svg viewBox="0 0 600 216" className="h-auto w-full" role="img" aria-label="Иконки выгружаются из Figma автоматически, токены пока вносятся вручную. Три пакета публикуются в GitLab Registry и используются в двух из четырех продуктов компании">
+    <svg viewBox="0 0 600 216" className="h-auto w-full" role="img" aria-label="Иконки выгружаются из Figma автоматически, токены пока вносятся вручную. Три пакета публикуются в GitLab Registry и используются в трех из четырех продуктов компании">
       <defs>
         <marker id={`${id}-a`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M0 0 L8 4 L0 8 z" className="fill-ink-3" />
@@ -47,7 +47,7 @@ export function DesignSystemDiagram() {
       <text x="440" y="121" textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">Registry</text>
       <path d="M488 108 H520" className="stroke-ink-3" markerEnd={`url(#${id}-a)`} />
       <rect x="520" y="80" width="72" height="56" rx="10" className="fill-surface-2 stroke-line-strong" />
-      <text x="556" y="104" textAnchor="middle" className="fill-ink text-[12.5px] font-semibold">2 из 4</text>
+      <text x="556" y="104" textAnchor="middle" className="fill-ink text-[12.5px] font-semibold">3 из 4</text>
       <text x="556" y="121" textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">продуктов</text>
     </svg>
   );

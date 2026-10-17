@@ -152,7 +152,7 @@ export function ListenersVisual() {
   const T = { duration: 6, repeat: Infinity, ease: "easeInOut" as const };
 
   return (
-    <Svg label="Слушатель проверяет каждое событие по правилам нотации: пропускает, корректирует или блокирует">
+    <Svg label="Слушатель проверяет каждое событие перед тем, как оно попадет в состояние: пропускает, корректирует или блокирует">
       <Markers id={id} />
 
       <rect x="24" y="88" width="88" height="184" rx="12" className={boxCls} />
@@ -161,7 +161,7 @@ export function ListenersVisual() {
 
       <rect x={gateL} y="72" width={gateR - gateL} height="216" rx="12" className="fill-accent-soft stroke-accent" />
       <text x="200" y="60" textAnchor="middle" className="fill-ink text-[13px] font-semibold">Слушатель</text>
-      <text x="200" y="306" textAnchor="middle" className="fill-accent font-mono text-[10.5px]">правила нотации</text>
+      <text x="200" y="306" textAnchor="middle" className="fill-accent font-mono text-[10.5px]">единые проверки</text>
 
       <rect x={dstL} y="88" width="88" height="184" rx="12" className={boxCls} />
       <text x={dstL + 16} y="114" className={titleCls}>Состояние</text>

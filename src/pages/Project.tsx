@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "@phosphor-icons/react";
 import { articles, readingMinutes, type Block } from "../articles";
-import { sortedProjects, type DiagramKey, type Project as P } from "../projects";
+import { articlesEn } from "../articles.en";
+import { t, useLang, type Lang } from "../i18n";
+import { companyLabel, projectText, sortedProjects, type DiagramKey, type Project as P } from "../projects";
 import { href } from "../router";
 import { sound } from "../sound";
 import { Code, Compare, Figure, Flow, Note, Quote, Rich, Stats, Timeline } from "../ui/ArticleBlocks";
@@ -21,7 +23,8 @@ const diagrams: Record<DiagramKey, () => React.ReactNode> = {
 
 const sid = (i: number) => `s-${i}`;
 
-function minutesLabel(n: number) {
+function minutesLabel(n: number, lang: Lang) {
+  if (lang === "en") return `${n} min read`;
   const m10 = n % 10;
   const m100 = n % 100;
   const word = m10 === 1 && m100 !== 11 ? "минута" : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? "минуты" : "минут";
@@ -94,6 +97,7 @@ function BlockView({ b, index }: { b: Block; index: number }) {
 
 // Оглавление сбоку на широком экране, подсвечивает раздел, который сейчас читают
 function Toc({ items }: { items: { id: string; title: string }[] }) {
+  const lang = useLang();
   const [active, setActive] = useState(items[0]?.id);
   useEffect(() => {
     const els = items.map((i) => document.getElementById(i.id)).filter(Boolean) as HTMLElement[];
@@ -109,8 +113,8 @@ function Toc({ items }: { items: { id: string; title: string }[] }) {
   }, [items]);
   // через портал: у статьи анимация на transform, внутри нее fixed крепился бы к статье, а не к окну
   return createPortal(
-    <nav aria-label="Содержание" className="fixed top-28 hidden w-[170px] xl:block" style={{ left: "calc(50% - 320px - 210px)" }}>
-      <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-3">Содержание</div>
+    <nav aria-label={t(lang, "Содержание", "Contents")} className="fixed top-28 hidden w-[170px] xl:block" style={{ left: "calc(50% - 320px - 210px)" }}>
+      <div className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink-3">{t(lang, "Содержание", "Contents")}</div>
       <ul className="mt-3 space-y-1.5 border-l border-line">
         {items.map((i) => (
           <li key={i.id}>
@@ -146,18 +150,19 @@ function Meta({ items }: { items: { k: string; v: string }[] }) {
 }
 
 function Related({ p }: { p: P }) {
+  const lang = useLang();
   const list = sortedProjects.filter((x) => x.slug !== p.slug && x.company === p.company).slice(0, 3);
   if (!list.length) return null;
   return (
     <section className="mt-14">
-      <h2 className="font-mono text-[12px] uppercase tracking-[0.12em] text-ink-3">{p.company === "Хакатон" ? "Другие хакатоны" : `Еще в ${p.company}`}</h2>
+      <h2 className="font-mono text-[12px] uppercase tracking-[0.12em] text-ink-3">{p.company === "Хакатон" ? t(lang, "Другие хакатоны", "Other hackathons") : t(lang, `Еще в ${p.company}`, `More at ${companyLabel(p.company, lang)}`)}</h2>
       <ul className="mt-3">
         {list.map((x) => (
           <li key={x.slug}>
             <a href={href.project(x.slug)} onMouseEnter={sound.hover} onClick={sound.click} className="group flex items-center gap-3 py-1.5">
-              <span className="min-w-0 truncate font-medium text-ink transition group-hover:text-accent-ink">{x.title}</span>
+              <span className="min-w-0 truncate font-medium text-ink transition group-hover:text-accent-ink">{projectText(x, lang).title}</span>
               <span aria-hidden className="leader max-sm:hidden" />
-              <span className="ml-auto shrink-0 font-mono text-[12.5px] text-ink-3">{x.date}</span>
+              <span className="ml-auto shrink-0 font-mono text-[12.5px] text-ink-3">{projectText(x, lang).date}</span>
             </a>
           </li>
         ))}
@@ -167,44 +172,48 @@ function Related({ p }: { p: P }) {
 }
 
 export function Project({ slug }: { slug: string }) {
+  const lang = useLang();
   const i = sortedProjects.findIndex((p) => p.slug === slug);
   const p = sortedProjects[i];
   if (!p) {
     return (
       <div className="fade-up">
-        <p className="text-ink-2">Такого проекта нет.</p>
+        <p className="text-ink-2">{t(lang, "Такого проекта нет.", "No such project.")}</p>
         <a className="link mt-3 inline-block" href={href.projects}>
-          Все проекты
+          {t(lang, "Все проекты", "All projects")}
         </a>
       </div>
     );
   }
-  const a = articles[p.slug];
+  const a = lang === "en" ? articlesEn[p.slug] ?? articles[p.slug] : articles[p.slug];
+  const x = projectText(p, lang);
   const next = sortedProjects[(i + 1) % sortedProjects.length];
   const toc = a ? a.blocks.flatMap((b, k) => ("h" in b ? [{ id: sid(k), title: b.h }] : [])) : [];
 
   return (
     <article className="fade-up" key={p.slug}>
       <a href={href.projects} onMouseEnter={sound.hover} onClick={sound.click} className="inline-flex items-center gap-1.5 text-[13.5px] text-ink-3 transition hover:text-ink">
-        <ArrowLeft size={14} /> Все проекты
+        <ArrowLeft size={14} /> {t(lang, "Все проекты", "All projects")}
       </a>
       <div className="mt-6">
         <ProjectThumb p={p} big />
       </div>
-      <h1 className="mt-7 text-[26px] font-semibold leading-tight tracking-tight">{p.title}</h1>
+      <h1 className="mt-7 text-[26px] font-semibold leading-tight tracking-tight">{x.title}</h1>
 
       {a ? (
         <>
           <Meta
             items={[
-              { k: "Где", v: p.company },
-              { k: "Когда", v: a.duration },
-              { k: "Роль", v: a.role },
-              { k: "Чтение", v: minutesLabel(readingMinutes(a)) },
+              { k: t(lang, "Где", "Where"), v: companyLabel(p.company, lang) },
+              { k: t(lang, "Когда", "When"), v: a.duration },
+              { k: t(lang, "Роль", "Role"), v: a.role },
+              { k: t(lang, "Чтение", "Reading"), v: minutesLabel(readingMinutes(a), lang) },
             ]}
           />
           <p className="mt-6 text-[17px] leading-[1.65] text-ink">{a.lead}</p>
-          <div className="mt-3 text-[13px] text-ink-3">Команда: {a.team}</div>
+          <div className="mt-3 text-[13px] text-ink-3">
+            {t(lang, "Команда", "Team")}: {a.team}
+          </div>
           {toc.length > 2 && <Toc items={toc} />}
           <div className="mt-10">
             {a.blocks.map((b, k) => (
@@ -215,9 +224,9 @@ export function Project({ slug }: { slug: string }) {
       ) : (
         <>
           <div className="mt-2 font-mono text-[12.5px] text-ink-3">
-            {p.company} · {p.date}
+            {companyLabel(p.company, lang)} · {x.date}
           </div>
-          <p className="mt-3 text-[16px] leading-relaxed text-ink-2">{p.summary}</p>
+          <p className="mt-3 text-[16px] leading-relaxed text-ink-2">{x.summary}</p>
           <div className="mt-10 space-y-10">
             {p.sections.map((s) => (
               <section key={s.title}>
@@ -230,7 +239,7 @@ export function Project({ slug }: { slug: string }) {
       )}
 
       <section className="mt-14 border-t border-line pt-6">
-        <h2 className="font-mono text-[12px] uppercase tracking-[0.12em] text-ink-3">Стек</h2>
+        <h2 className="font-mono text-[12px] uppercase tracking-[0.12em] text-ink-3">{t(lang, "Стек", "Stack")}</h2>
         <ul className="mt-3 flex flex-wrap gap-1.5">
           {p.stack.map((s) => (
             <li key={s} className="rounded-full border border-line-strong px-2.5 py-0.5 font-mono text-[12px] text-ink-2">
@@ -260,8 +269,8 @@ export function Project({ slug }: { slug: string }) {
         className="group mt-12 flex items-center justify-between gap-4 border-y border-line py-5"
       >
         <span>
-          <span className="block font-mono text-[12px] uppercase tracking-[0.12em] text-ink-3">Следующий проект</span>
-          <span className="mt-1 block font-medium transition group-hover:text-accent-ink">{next.title}</span>
+          <span className="block font-mono text-[12px] uppercase tracking-[0.12em] text-ink-3">{t(lang, "Следующий проект", "Next project")}</span>
+          <span className="mt-1 block font-medium transition group-hover:text-accent-ink">{projectText(next, lang).title}</span>
         </span>
         <ArrowRight size={18} className="shrink-0 text-ink-3 transition group-hover:translate-x-1 group-hover:text-ink" />
       </a>

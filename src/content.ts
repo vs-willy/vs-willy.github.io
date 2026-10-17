@@ -226,6 +226,19 @@ export const education = [
   { title: "Искусственный интеллект в летающей робототехнике", detail: "Курс на 216 часов, Физико-технический колледж", years: "2021" },
 ];
 
+export const educationEn = [
+  { title: "MTI, Applied Informatics", detail: "Online, studying alongside work", years: "2025 - 2028" },
+  { title: "Kolomna College", detail: "Information Systems and Programming", years: "2018 - 2022" },
+  { title: "Artificial Intelligence in Flying Robotics", detail: "216-hour course, College of Physics and Technology", years: "2021" },
+];
+
+// Подписи групп стека на английском, сами технологии одинаковые
+export const stackGroupEn: Record<string, string> = {
+  Фронтенд: "Frontend",
+  Бэкенд: "Backend",
+  "Инфраструктура и подходы": "Infrastructure and practices",
+};
+
 export const stack = [
   {
     group: "Фронтенд",

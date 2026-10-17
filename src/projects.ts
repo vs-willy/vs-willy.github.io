@@ -15,11 +15,13 @@ export type Project = {
   stack: string[];
   result?: string; // главный итог одной строкой
   sections: { title: string; text: string; diagram?: DiagramKey }[];
+  en: { title: string; summary: string; date: string; result?: string };
 };
 
 export const projects: Project[] = [
   {
     slug: "kosmohackathon",
+    en: {"title": "KosmoHackathon St. Petersburg: 1st place", "summary": "A fuel supply strategy for an orbital depot and an event-driven simulation that checks the plan", "date": "Sep 2026", "result": "1st place, Roscosmos and MIREA"},
     title: "КосмоХакатон СПб: 1 место",
     summary: "Стратегия снабжения орбитального топливного узла и событийная симуляция, которая проверяет план",
     company: "Хакатон",
@@ -45,6 +47,7 @@ export const projects: Project[] = [
   },
   {
     slug: "robozon",
+    en: {"title": "ROBOZON by Ozon Tech: 2nd place", "summary": "Our own discrete-event engine for simulating a sorting center", "date": "Sep 2026", "result": "2nd place out of 3,600+ participants"},
     title: "РОБОЗОН от Ozon Tech: 2 место",
     summary: "Свой дискретно-событийный движок для моделирования сортировочного центра",
     company: "Хакатон",
@@ -70,6 +73,7 @@ export const projects: Project[] = [
   },
   {
     slug: "arrows",
+    en: {"title": "New edge attachment", "summary": "Replaced about 30 handles per element with one, and large maps stopped crashing the tab", "date": "2025-2026", "result": "A 1000-element map opens in 1.7 s instead of crashing the tab, with 2.5-3x less memory"},
     title: "Новое крепление стрелок",
     summary: "Около 30 точек крепления на элемент заменил одной, и большие карты перестали ронять вкладку",
     company: "PIX Robotics",
@@ -96,6 +100,7 @@ export const projects: Project[] = [
   },
   {
     slug: "canvas",
+    en: {"title": "Canvas editor architecture", "summary": "Commands with rollback, listeners every change goes through, and one facade over the canvas API", "date": "2025"},
     title: "Архитектура canvas-редактора",
     summary: "Команды с откатом, слушатели, через которые проходит каждое изменение, и единый фасад над API канваса",
     company: "PIX Robotics",
@@ -123,6 +128,7 @@ export const projects: Project[] = [
   },
   {
     slug: "e2e",
+    en: {"title": "E2E testing from scratch", "summary": "From zero tests to ~200 Playwright scenarios that both QA and developers rely on", "date": "2026", "result": "~200 full scenarios"},
     title: "E2E-тестирование с нуля",
     summary: "От нуля тестов до ~200 сценариев на Playwright, которым доверяют и QA, и разработчики",
     company: "PIX Robotics",
@@ -144,6 +150,7 @@ export const projects: Project[] = [
   },
   {
     slug: "design-system",
+    en: {"title": "Design system of 3 npm packages", "summary": "A UI library on top of Ant Design 5, 740+ icons from Figma and design tokens", "date": "2025", "result": "Used by 3 of the company's 4 products"},
     title: "Дизайн-система из 3 npm-пакетов",
     summary: "UI-библиотека поверх Ant Design 5, 740+ иконок из Figma и дизайн-токены",
     company: "PIX Robotics",
@@ -166,6 +173,7 @@ export const projects: Project[] = [
   },
   {
     slug: "export",
+    en: {"title": "Server-side map export", "summary": "Moved export from the browser to the server in headless Chromium, so large maps no longer freeze the tab", "date": "2025"},
     title: "Серверный экспорт карт",
     summary: "Экспорт перенес из браузера на сервер в headless Chromium, большие карты перестали вешать вкладку",
     company: "PIX Robotics",
@@ -190,6 +198,7 @@ export const projects: Project[] = [
   },
   {
     slug: "igor",
+    en: {"title": "IIgor, the product's AI assistant", "summary": "The assistant's frontend: streaming answers, animations and awareness of where the user is", "date": "2025"},
     title: "ИИгорь, AI-ассистент продукта",
     summary: "Фронт ассистента: стриминг ответов, анимации и понимание того, где сейчас пользователь",
     company: "PIX Robotics",
@@ -206,6 +215,7 @@ export const projects: Project[] = [
   },
   {
     slug: "event-log",
+    en: {"title": "Event log of 10M rows", "summary": "Replaced EF Core inserts with native COPY BINARY in PostgreSQL", "date": "2024", "result": "10M rows in about a minute"},
     title: "Журнал событий на 10 млн строк",
     summary: "Заменил вставку через EF Core на нативный COPY BINARY в PostgreSQL",
     company: "PIX Robotics",
@@ -227,6 +237,7 @@ export const projects: Project[] = [
   },
   {
     slug: "fudkit",
+    en: {"title": "FudKit: a POS in React", "summary": "Rewrote the POS module from Angular to React and connected it to an Atol fiscal printer", "date": "2021-2022"},
     title: "FudKit: касса на React",
     summary: "Переписал модуль кассы с Angular на React и подключил его к ККМ Atol",
     company: "ВиртуумЛаб",
@@ -248,6 +259,7 @@ export const projects: Project[] = [
   },
   {
     slug: "crm",
+    en: {"title": "CRM for a client abroad", "summary": "Inventory, components and sales with analytics, built from scratch with one colleague", "date": "2022"},
     title: "CRM для зарубежного заказчика",
     summary: "Учет товаров, компонентов и продаж с аналитикой, с нуля вдвоем с коллегой",
     company: "ВиртуумЛаб",
@@ -263,5 +275,13 @@ export const projects: Project[] = [
     ],
   },
 ];
+
+// Название места работы на нужном языке
+export const companyLabel = (c: Company, lang: "ru" | "en") =>
+  lang === "en" ? ({ "PIX Robotics": "PIX Robotics", ВиртуумЛаб: "VirtuumLab", Хакатон: "Hackathon" } as const)[c] : c;
+
+// Текстовые поля проекта на нужном языке
+export const projectText = (p: Project, lang: "ru" | "en") =>
+  lang === "en" ? p.en : { title: p.title, summary: p.summary, date: p.date, result: p.result };
 
 export const sortedProjects = [...projects].sort((a, b) => b.sort - a.sort);

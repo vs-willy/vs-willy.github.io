@@ -1,15 +1,18 @@
 import { useState } from "react";
 import { sortedProjects, type Company } from "../projects";
+import { t, useLang } from "../i18n";
 import { sound } from "../sound";
 import { ProjectRow } from "../ui/ProjectRow";
 
 const filters: ("Все" | Company)[] = ["Все", "PIX Robotics", "ВиртуумЛаб", "Хакатон"];
-const filterLabel = (f: string) => (f === "Хакатон" ? "Хакатоны" : f);
+const filterLabel = (f: string, en: boolean) =>
+  f === "Хакатон" ? (en ? "Hackathons" : "Хакатоны") : f === "Все" ? (en ? "All" : "Все") : f === "ВиртуумЛаб" && en ? "VirtuumLab" : f;
 
 // Все проекты с фильтром по месту работы, сгруппированы по году.
 // С плитки «Хакатоны» страница открывается сразу с фильтром по хакатонам.
 export function Projects({ initial = "Все" }: { initial?: (typeof filters)[number] }) {
   const [f, setF] = useState<(typeof filters)[number]>(initial);
+  const lang = useLang();
   const list = sortedProjects.filter((p) => f === "Все" || p.company === f);
   const groups = new Map<string, typeof list>();
   for (const p of list) {
@@ -18,9 +21,9 @@ export function Projects({ initial = "Все" }: { initial?: (typeof filters)[nu
   }
   return (
     <div className="fade-up">
-      <h1 className="text-[22px] font-semibold tracking-tight">Проекты</h1>
-      <p className="mt-2 text-ink-2">Работа в компаниях и на хакатонах. У каждого проекта своя страница с подробностями.</p>
-      <div role="group" aria-label="Фильтр" className="mt-6 flex flex-wrap gap-1.5">
+      <h1 className="text-[22px] font-semibold tracking-tight">{t(lang, "Проекты", "Projects")}</h1>
+      <p className="mt-2 text-ink-2">{t(lang, "Работа в компаниях и на хакатонах. У каждого проекта своя страница с подробностями.", "Work at companies and at hackathons. Each project has its own page with the details.")}</p>
+      <div role="group" aria-label={t(lang, "Фильтр", "Filter")} className="mt-6 flex flex-wrap gap-1.5">
         {filters.map((x) => (
           <button
             key={x}
@@ -33,7 +36,7 @@ export function Projects({ initial = "Все" }: { initial?: (typeof filters)[nu
             }}
             className={`rounded-full border px-3 py-1 text-[13.5px] transition active:scale-95 ${f === x ? "border-ink bg-ink text-bg" : "border-line-strong text-ink-2 hover:text-ink"}`}
           >
-            {filterLabel(x)}
+            {filterLabel(x, lang === "en")}
           </button>
         ))}
       </div>

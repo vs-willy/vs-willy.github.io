@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { contacts, education, stack } from "../content";
+import { contacts, education, educationEn, stack, stackGroupEn } from "../content";
+import { t, useLang } from "../i18n";
 import { books } from "../books";
 import { sortedProjects } from "../projects";
 import { href } from "../router";
@@ -17,14 +18,15 @@ import { nb } from "../typo";
 
 // Сменяющийся чип: ширина подстраивается под слово, у каждого слова свой цвет
 const roles = [
-  { text: "canvas-редактор", hue: 42 },
-  { text: "дизайн-систему", hue: 285 },
-  { text: "e2e-тесты", hue: 150 },
-  { text: "бэкенд на C#", hue: 250 },
+  { text: "canvas-редактор", en: "canvas editor", hue: 42 },
+  { text: "дизайн-систему", en: "design system", hue: 285 },
+  { text: "e2e-тесты", en: "e2e tests", hue: 150 },
+  { text: "бэкенд на C#", en: "C# backend", hue: 250 },
 ];
 
 function Rotating() {
   const reduce = useReducedMotion();
+  const lang = useLang();
   const [i, setI] = useState(0);
   useEffect(() => {
     if (reduce) return;
@@ -41,7 +43,7 @@ function Rotating() {
     >
       <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
-          key={r.text}
+          key={r.text + lang}
           layout="position"
           initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
@@ -49,19 +51,27 @@ function Rotating() {
           transition={{ duration: 0.3 }}
           className="whitespace-nowrap"
         >
-          {r.text}
+          {t(lang, r.text, r.en)}
         </motion.span>
       </AnimatePresence>
     </motion.span>
   );
 }
 
-const experience: { company: string; role: string; years: string; logo?: "pix" | "virtuum"; site?: string; muted?: boolean }[] = [
-  { company: "PIX Robotics", role: "Middle Fullstack-разработчик", years: "2024 - сейчас", logo: "pix", site: "https://pixrobotics.com" },
-  { company: "PIX Robotics", role: "Junior Fullstack-разработчик", years: "2023 - 2024", logo: "pix", site: "https://pixrobotics.com" },
-  { company: "Срочная служба", role: "армия", years: "2022 - 2023", muted: true },
-  { company: "ВиртуумЛаб", role: "Инженер-программист", years: "2021 - 2022", logo: "virtuum", site: "https://virtuumlab.ru" },
+type Exp = { company: string; role: string; years: string; logo?: "pix" | "virtuum"; site?: string; muted?: boolean; en: { company: string; role: string; years: string } };
+const experience: Exp[] = [
+  { company: "PIX Robotics", role: "Middle Fullstack-разработчик", years: "2024 - сейчас", logo: "pix", site: "https://pixrobotics.com", en: { company: "PIX Robotics", role: "Middle Full Stack Developer", years: "2024 - now" } },
+  { company: "PIX Robotics", role: "Junior Fullstack-разработчик", years: "2023 - 2024", logo: "pix", site: "https://pixrobotics.com", en: { company: "PIX Robotics", role: "Junior Full Stack Developer", years: "2023 - 2024" } },
+  { company: "Срочная служба", role: "армия", years: "2022 - 2023", muted: true, en: { company: "Military service", role: "Russian Army", years: "2022 - 2023" } },
+  { company: "ВиртуумЛаб", role: "Инженер-программист", years: "2021 - 2022", logo: "virtuum", site: "https://virtuumlab.ru", en: { company: "VirtuumLab", role: "Software Engineer", years: "2021 - 2022" } },
 ];
+
+// Склонение «книга» и других слов по числу
+const plural = (n: number, one: string, few: string, many: string) => {
+  const m10 = n % 10;
+  const m100 = n % 100;
+  return m10 === 1 && m100 !== 11 ? one : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? few : many;
+};
 
 function Tile({ to, title, note, art }: { to: string; title: string; note: string; art: string }) {
   return (
@@ -87,21 +97,62 @@ const tileArt = {
 };
 
 export function Home() {
+  const lang = useLang();
+  const en = lang === "en";
+  const ru = (x: string) => (en ? x : nb(x));
   const hackCount = sortedProjects.filter((p) => p.company === "Хакатон").length;
   return (
     <div className="fade-up">
       <header className="grid gap-8 sm:grid-cols-[1fr_230px] sm:gap-8">
         <div>
-          <h1 className="text-[17px] font-semibold">Виталий Иванов</h1>
+          <h1 className="text-[17px] font-semibold">{t(lang, "Виталий Иванов", "Vitaly Ivanov")}</h1>
           <div className="mt-1.5 h-5 text-[13px] text-ink-3">
             <Weather />
           </div>
           <div className="mt-5 space-y-4 leading-[1.65] text-ink-2">
+            {en ? (
+              <p>
+                I'm a full stack developer with a frontend focus. At PIX Robotics I'm responsible for the <span className="whitespace-nowrap"><Rotating /></span>
+              </p>
+            ) : (
+              <p>
+                Я fullstack-разработчик с упором во фронт. Сейчас в PIX Robotics отвечаю <span className="whitespace-nowrap">за <Rotating /></span>
+              </p>
+            )}
             <p>
-              Я fullstack-разработчик с упором во фронт. Сейчас в PIX Robotics отвечаю <span className="whitespace-nowrap">за <Rotating /></span>
+              {ru(
+                t(
+                  lang,
+                  "Пишу на React и TypeScript, а когда браузера не хватает, сам делаю бэкенд на C#/.NET. Больше всего люблю сложные интерфейсы, где важны архитектура и скорость.",
+                  "I write React and TypeScript, and when the browser isn't enough, I build the backend myself in C#/.NET. I like complex interfaces most, where architecture and speed matter.",
+                ),
+              )}
             </p>
-            <p>{nb("Пишу на React и TypeScript, а когда браузера не хватает, сам делаю бэкенд на C#/.NET. Больше всего люблю сложные интерфейсы, где важны архитектура и скорость.")}</p>
-            <p>{nb("Ищу команду с редакторами, графами или внутренними инструментами. Москва, офис или гибрид, а также удаленка и релокация.")}</p>
+            <p>
+              {ru(
+                t(
+                  lang,
+                  "Ищу команду с редакторами, графами или внутренними инструментами. Москва, офис или гибрид, а также удаленка и релокация.",
+                  "Looking for a team working on editors, graphs or internal tools. Moscow, office or hybrid, also remote and relocation.",
+                ),
+              )}
+            </p>
+            {en ? (
+              <p>
+                Message me on{" "}
+                <a className="link text-ink" href={contacts.telegram.href} target="_blank" rel="noreferrer">
+                  Telegram ↗
+                </a>
+                , see my{" "}
+                <a className="link text-ink" href={contacts.github.href} target="_blank" rel="noreferrer">
+                  GitHub ↗
+                </a>{" "}
+                or email{" "}
+                <a className="link text-ink" href={contacts.email.href}>
+                  {contacts.email.label}
+                </a>
+              </p>
+            ) : (
             <p>
               Пишите в{"\u00A0"}
               <a className="link text-ink" href={contacts.telegram.href} target="_blank" rel="noreferrer">
@@ -116,24 +167,27 @@ export function Home() {
                 {contacts.email.label}
               </a>
             </p>
+            )}
           </div>
         </div>
         <PortraitFx
-          label="Портрет Виталия, нарисованный точками"
+          label={t(lang, "Портрет Виталия, нарисованный точками", "Portrait of Vitaly drawn with dots")}
           className="aspect-square w-full max-w-[240px] max-sm:mx-auto max-sm:max-w-[220px]"
         />
       </header>
 
-      <nav aria-label="Разделы" className="-mx-4 mt-12 grid grid-cols-3 border-y border-line sm:-mx-6">
-        <Tile to={href.projects} title="Проекты" note={`${sortedProjects.length} кейсов`} art={tileArt.projects} />
-        <Tile to={href.hackathons} title="Хакатоны" note={`${hackCount} призовых места`} art={tileArt.hack} />
-        <Tile to={href.books} title="Книги" note={books.length ? `${books.length} книг` : "скоро"} art={tileArt.books} />
+      <nav aria-label={t(lang, "Разделы", "Sections")} className="-mx-4 mt-12 grid grid-cols-3 border-y border-line sm:-mx-6">
+        <Tile to={href.projects} title={t(lang, "Проекты", "Projects")} note={t(lang, `${sortedProjects.length} ${plural(sortedProjects.length, "кейс", "кейса", "кейсов")}`, `${sortedProjects.length} case studies`)} art={tileArt.projects} />
+        <Tile to={href.hackathons} title={t(lang, "Хакатоны", "Hackathons")} note={t(lang, `${hackCount} ${plural(hackCount, "призовое место", "призовых места", "призовых мест")}`, `${hackCount} podium finishes`)} art={tileArt.hack} />
+        <Tile to={href.books} title={t(lang, "Книги", "Books")} note={t(lang, `${books.length} ${plural(books.length, "книга", "книги", "книг")}`, `${books.length} books`)} art={tileArt.books} />
       </nav>
 
       <section className="section">
-        <SectionLabel n="01">Опыт</SectionLabel>
+        <SectionLabel n="01">{t(lang, "Опыт", "Experience")}</SectionLabel>
         <ul className="mt-4">
-          {experience.map((e) => (
+          {experience.map((x) => {
+            const e = { ...x, ...(en ? x.en : {}) };
+            return (
             <li key={e.years} className="flex items-start gap-3 py-2.5">
               <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-[7px] border border-line bg-surface text-ink">
                 {e.logo ? <Logo name={e.logo} className={e.logo === "pix" ? "h-3.5 w-5" : "h-5 w-3"} /> : <ShieldStar size={16} weight="duotone" className="text-ink-2" />}
@@ -146,12 +200,13 @@ export function Home() {
                 ) : (
                   <div className={`font-medium ${e.muted ? "text-ink-2" : ""}`}>{e.company}</div>
                 )}
-                <div className="text-[13.5px] text-ink-3">{nb(e.role)}</div>
+                <div className="text-[13.5px] text-ink-3">{ru(e.role)}</div>
               </div>
               <span aria-hidden className="leader mx-1! mt-[13px]!" />
               <div className="mt-0.5 shrink-0 font-mono text-[12.5px] text-ink-3 tabular-nums">{e.years}</div>
             </li>
-          ))}
+            );
+          })}
         </ul>
       </section>
 
@@ -160,11 +215,11 @@ export function Home() {
           n="02"
           aside={
             <a href={href.projects} onMouseEnter={sound.hover} onClick={sound.click} className="text-[13.5px] text-ink-2 transition hover:text-ink">
-              Все проекты
+              {t(lang, "Все проекты", "All projects")}
             </a>
           }
         >
-          Проекты
+          {t(lang, "Проекты", "Projects")}
         </SectionLabel>
         <ul className="mt-4">
           {sortedProjects.slice(0, 6).map((p) => (
@@ -174,25 +229,25 @@ export function Home() {
       </section>
 
       <section className="section">
-        <SectionLabel n="03">Стек</SectionLabel>
+        <SectionLabel n="03">{t(lang, "Стек", "Stack")}</SectionLabel>
         <div className="mt-5 space-y-4">
           {stack.map((g) => (
             <div key={g.group} className="grid gap-2 sm:grid-cols-[150px_1fr]">
-              <div className="text-[13.5px] text-ink-3">{g.group}</div>
-              <div className="text-ink-2">{g.items.join(", ")}</div>
+              <div className="text-[13.5px] text-ink-3">{en ? stackGroupEn[g.group] : g.group}</div>
+              <div className="text-ink-2">{g.items.map((i) => (en && i === "npm-пакеты" ? "npm packages" : i)).join(", ")}</div>
             </div>
           ))}
         </div>
       </section>
 
       <section className="section">
-        <SectionLabel n="04">Учеба</SectionLabel>
+        <SectionLabel n="04">{t(lang, "Учеба", "Education")}</SectionLabel>
         <ul className="mt-4">
-          {education.map((e) => (
+          {(en ? educationEn : education).map((e) => (
             <li key={e.title} className="flex items-start gap-3 py-2.5">
               <div className="min-w-0">
-                <div className="font-medium">{nb(e.title)}</div>
-                <div className="text-[13.5px] text-ink-3">{nb(e.detail)}</div>
+                <div className="font-medium">{ru(e.title)}</div>
+                <div className="text-[13.5px] text-ink-3">{ru(e.detail)}</div>
               </div>
               <span aria-hidden className="leader mx-1! mt-[13px]!" />
               <div className="mt-0.5 shrink-0 font-mono text-[12.5px] text-ink-3 tabular-nums">{e.years}</div>
@@ -203,8 +258,8 @@ export function Home() {
 
       {books.length > 0 && (
         <section className="section">
-          <SectionLabel n="05">Книги</SectionLabel>
-          <p className="mt-4 text-[14.5px] text-ink-2">{nb("Книги, которые мне понравились и которые я советую.")}</p>
+          <SectionLabel n="05">{t(lang, "Книги", "Books")}</SectionLabel>
+          <p className="mt-4 text-[14.5px] text-ink-2">{ru(t(lang, "Книги, которые мне понравились и которые я советую.", "Books I enjoyed and recommend."))}</p>
           <div className="mt-6">
             <Shelf />
           </div>

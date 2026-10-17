@@ -3,6 +3,7 @@ import { Books, FolderSimple, House, Moon, SpeakerHigh, SpeakerSlash, Sun, Teleg
 import { contacts } from "../content";
 import { href, useRoute } from "../router";
 import { sound } from "../sound";
+import { setLang, t, useLang } from "../i18n";
 
 // Плавающий док внизу, как на cali.so. Наведение и клик со звуком, звук и тему можно переключить
 function Item({ label, active, children, ...rest }: { label: string; active?: boolean; children: ReactNode } & React.AnchorHTMLAttributes<HTMLAnchorElement> & React.ButtonHTMLAttributes<HTMLButtonElement>) {
@@ -34,6 +35,7 @@ function Item({ label, active, children, ...rest }: { label: string; active?: bo
 
 export function Dock() {
   const route = useRoute();
+  const lang = useLang();
   const soundOn = useSyncExternalStore(sound.subscribe, sound.isOn, () => true);
   const [theme, setTheme] = useState(() => document.documentElement.dataset.theme ?? "light");
   useEffect(() => {
@@ -48,25 +50,25 @@ export function Dock() {
   const sep = <span aria-hidden className="mx-1 h-5 w-px bg-line-strong" />;
   return (
     <nav
-      aria-label="Навигация"
+      aria-label={t(lang, "Навигация", "Navigation")}
       className="fixed bottom-[calc(16px+env(safe-area-inset-bottom,0px))] left-1/2 z-40 flex -translate-x-1/2 items-center gap-0.5 rounded-full border border-line bg-surface/85 p-1.5 shadow-[var(--shadow)] backdrop-blur-md"
     >
-      <Item label="Главная" href={href.home} active={route.name === "home"}>
+      <Item label={t(lang, "Главная", "Home")} href={href.home} active={route.name === "home"}>
         <House size={18} />
       </Item>
       {sep}
-      <Item label="Проекты" href={href.projects} active={route.name === "projects" || route.name === "project" || route.name === "hackathons"}>
+      <Item label={t(lang, "Проекты", "Projects")} href={href.projects} active={route.name === "projects" || route.name === "project" || route.name === "hackathons"}>
         <FolderSimple size={18} />
       </Item>
-      <Item label="Книги" href={href.books} active={route.name === "books"}>
+      <Item label={t(lang, "Книги", "Books")} href={href.books} active={route.name === "books"}>
         <Books size={18} />
       </Item>
-      <Item label="Написать в Telegram" href={contacts.telegram.href} target="_blank" rel="noreferrer">
+      <Item label={t(lang, "Написать в Telegram", "Message on Telegram")} href={contacts.telegram.href} target="_blank" rel="noreferrer">
         <TelegramLogo size={18} />
       </Item>
       {sep}
       <Item
-        label={soundOn ? "Выключить звук" : "Включить звук"}
+        label={soundOn ? t(lang, "Выключить звук", "Sound off") : t(lang, "Включить звук", "Sound on")}
         onClick={() => {
           sound.set(!soundOn);
           if (!soundOn) setTimeout(sound.toggle, 0);
@@ -75,13 +77,22 @@ export function Dock() {
         {soundOn ? <SpeakerHigh size={18} /> : <SpeakerSlash size={18} />}
       </Item>
       <Item
-        label={theme === "dark" ? "Светлая тема" : "Темная тема"}
+        label={theme === "dark" ? t(lang, "Светлая тема", "Light theme") : t(lang, "Темная тема", "Dark theme")}
         onClick={() => {
           sound.toggle();
           setTheme((t) => (t === "dark" ? "light" : "dark"));
         }}
       >
         {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+      </Item>
+      <Item
+        label={t(lang, "English version", "Русская версия")}
+        onClick={() => {
+          sound.toggle();
+          setLang(lang === "en" ? "ru" : "en");
+        }}
+      >
+        <span className="font-mono text-[12px] font-semibold tracking-tight">{lang === "en" ? "RU" : "EN"}</span>
       </Item>
     </nav>
   );

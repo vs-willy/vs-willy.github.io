@@ -1,4 +1,5 @@
 import { useEffect, useId } from "react";
+import { useT } from "../i18n";
 import { animate, motion, useMotionValue, useReducedMotion, useTransform } from "motion/react";
 
 // Четыре схемы к кейсу канваса. Сетка 8px, связи ортогональные, у каждой стрелки подпись.
@@ -41,6 +42,7 @@ function useMarkerId() {
 
 /* 1. Command / Executor */
 export function CommandsVisual() {
+  const tr = useT();
   const reduce = useReducedMotion();
   const id = useMarkerId();
   const T = { duration: 8, repeat: Infinity, ease: "easeInOut" as const };
@@ -51,12 +53,12 @@ export function CommandsVisual() {
   const to = 344;
 
   return (
-    <Svg label="Команда уходит на бэкенд, подтверждение возвращается через SignalR в Executor, неуспешная команда откатывается">
+    <Svg label={tr("Команда уходит на бэкенд, подтверждение возвращается через SignalR в Executor, неуспешная команда откатывается", "A command goes to the backend, the confirmation comes back to the Executor via SignalR, a failed command is rolled back")}>
       <Markers id={id} />
 
       {/* Канвас */}
       <rect x="24" y="72" width="112" height="208" rx="12" className={boxCls} />
-      <text x="40" y="100" className={titleCls}>Канвас</text>
+      <text x="40" y="100" className={titleCls}>{tr("Канвас", "Canvas")}</text>
       <rect x="40" y={topY - 18} width="80" height="36" rx="8" className={subCls} />
       <text x="80" y={topY + 4} textAnchor="middle" className="fill-ink-2 font-mono text-[11px]">Command</text>
       <motion.rect
@@ -74,19 +76,19 @@ export function CommandsVisual() {
 
       {/* Бэкенд */}
       <rect x="344" y="72" width="112" height="208" rx="12" className={boxCls} />
-      <text x="360" y="100" className={titleCls}>Бэкенд</text>
+      <text x="360" y="100" className={titleCls}>{tr("Бэкенд", "Backend")}</text>
       <rect x="360" y={topY - 18} width="80" height="36" rx="8" className={subCls} />
-      <text x="400" y={topY + 4} textAnchor="middle" className="fill-ink-2 font-mono text-[11px]">применение</text>
+      <text x="400" y={topY + 4} textAnchor="middle" className="fill-ink-2 font-mono text-[11px]">{tr("применение", "apply")}</text>
       <rect x="360" y={botY - 18} width="80" height="36" rx="8" className={subCls} />
       <text x="400" y={botY + 4} textAnchor="middle" className="fill-ink-2 font-mono text-[11px]">event store</text>
       <line x1="400" y1={topY + 18} x2="400" y2={botY - 18} className={edgeCls} markerEnd={`url(#${id}-a)`} />
 
       {/* Связи */}
       <line x1={from} y1={topY} x2={to} y2={topY} className={edgeCls} markerEnd={`url(#${id}-a)`} />
-      <text x="240" y={topY - 20} textAnchor="middle" className={monoCls}>команды, пачкой</text>
+      <text x="240" y={topY - 20} textAnchor="middle" className={monoCls}>{tr("команды, пачкой", "commands, batched")}</text>
       <line x1={to} y1={botY} x2={from} y2={botY} className={edgeCls} markerEnd={`url(#${id}-a)`} />
       <text x="240" y={botY - 14} textAnchor="middle" className={monoCls}>SignalR</text>
-      <text x="240" y={botY + 22} textAnchor="middle" className={monoCls}>подтверждения и правки коллег</text>
+      <text x="240" y={botY + 22} textAnchor="middle" className={monoCls}>{tr("подтверждения и правки коллег", "confirmations from server")}</text>
 
       {/* Успешная команда */}
       <motion.g
@@ -121,7 +123,7 @@ export function CommandsVisual() {
         animate={reduce ? { opacity: 0 } : { opacity: [0, 0, 1, 1, 0] }}
         transition={reduce ? { duration: 0 } : { ...T, times: [0, 0.72, 0.75, 0.92, 0.96] }}
       >
-        не применилась: откат
+        {tr("не применилась: откат", "failed: rollback")}
       </motion.text>
 
       {/* undo / redo */}
@@ -130,7 +132,7 @@ export function CommandsVisual() {
         <text x="56" y="322" textAnchor="middle" className="fill-ink-2 font-mono text-[11px]">undo</text>
         <rect x="96" y="304" width="64" height="28" rx="14" className={subCls} />
         <text x="128" y="322" textAnchor="middle" className="fill-ink-2 font-mono text-[11px]">redo</text>
-        <text x="176" y="322" className={monoCls}>бесплатно: это просто обратные команды</text>
+        <text x="176" y="322" className={monoCls}>{tr("бесплатно: это просто обратные команды", "free: just inverse commands")}</text>
       </g>
     </Svg>
   );
@@ -138,12 +140,13 @@ export function CommandsVisual() {
 
 /* 2. Слушатели: три исхода для события */
 export function ListenersVisual() {
+  const tr = useT();
   const reduce = useReducedMotion();
   const id = useMarkerId();
   const lanes = [
-    { y: 128, outcome: "пропущено", kind: "pass" as const },
-    { y: 184, outcome: "скорректировано", kind: "fix" as const },
-    { y: 240, outcome: "заблокировано", kind: "block" as const },
+    { y: 128, outcome: tr("пропущено", "passed"), kind: "pass" as const },
+    { y: 184, outcome: tr("скорректировано", "corrected"), kind: "fix" as const },
+    { y: 240, outcome: tr("заблокировано", "blocked"), kind: "block" as const },
   ];
   const srcR = 112; // правый край источника
   const gateL = 168;
@@ -152,20 +155,20 @@ export function ListenersVisual() {
   const T = { duration: 6, repeat: Infinity, ease: "easeInOut" as const };
 
   return (
-    <Svg label="Слушатель проверяет каждое событие перед тем, как оно попадет в состояние: пропускает, корректирует или блокирует">
+    <Svg label={tr("Слушатель проверяет каждое событие перед тем, как оно попадет в состояние: пропускает, корректирует или блокирует", "A listener checks every event before it reaches the state: passes, corrects or blocks it")}>
       <Markers id={id} />
 
       <rect x="24" y="88" width="88" height="184" rx="12" className={boxCls} />
       <text x="40" y="114" className={titleCls}>xyflow</text>
-      <text x="40" y="262" className={monoCls}>события</text>
+      <text x="40" y="262" className={monoCls}>{tr("события", "events")}</text>
 
       <rect x={gateL} y="72" width={gateR - gateL} height="216" rx="12" className="fill-accent-soft stroke-accent" />
-      <text x="200" y="60" textAnchor="middle" className="fill-ink text-[13px] font-semibold">Слушатель</text>
-      <text x="200" y="306" textAnchor="middle" className="fill-accent font-mono text-[10.5px]">единые проверки</text>
+      <text x="200" y="60" textAnchor="middle" className="fill-ink text-[13px] font-semibold">{tr("Слушатель", "Listener")}</text>
+      <text x="200" y="306" textAnchor="middle" className="fill-accent font-mono text-[10.5px]">{tr("единые проверки", "shared checks")}</text>
 
       <rect x={dstL} y="88" width="88" height="184" rx="12" className={boxCls} />
-      <text x={dstL + 16} y="114" className={titleCls}>Состояние</text>
-      <text x={dstL + 16} y="262" className={monoCls}>карта</text>
+      <text x={dstL + 16} y="114" className={titleCls}>{tr("Состояние", "State")}</text>
+      <text x={dstL + 16} y="262" className={monoCls}>{tr("карта", "map")}</text>
 
       {lanes.map((l, i) => {
         const start = i / lanes.length;
@@ -229,6 +232,7 @@ export function ListenersVisual() {
 
 /* 3. MapInstance: было и стало рядом */
 export function FacadeVisual() {
+  const tr = useT();
   const reduce = useReducedMotion();
   const id = useMarkerId();
   const rows = [112, 176, 240];
@@ -247,7 +251,7 @@ export function FacadeVisual() {
     return (
       <g>
         <rect x={x0} y="48" width="208" height="264" rx="12" className={after ? "fill-surface stroke-accent/50" : boxCls} />
-        <text x={x0 + 16} y="76" className={after ? "fill-accent font-mono text-[11px]" : monoCls}>{after ? "стало" : "было"}</text>
+        <text x={x0 + 16} y="76" className={after ? "fill-accent font-mono text-[11px]" : monoCls}>{after ? tr("стало", "after") : tr("было", "before")}</text>
 
         {rows.map((y, i) => (
           <g key={y}>
@@ -310,14 +314,14 @@ export function FacadeVisual() {
         )}
 
         <text x={x0 + 104} y="292" textAnchor="middle" className={after ? "fill-ink-2 font-mono text-[10.5px]" : monoCls}>
-          {after ? "одна точка входа" : "каждый ходит сам"}
+          {after ? tr("одна точка входа", "one entry point") : tr("каждый ходит сам", "everyone on their own")}
         </text>
       </g>
     );
   };
 
   return (
-    <Svg label="Было: каждый компонент сам обращается к Redux и API xyflow. Стало: все обращения идут через фасад MapInstance">
+    <Svg label={tr("Было: каждый компонент сам обращается к Redux и API xyflow. Стало: все обращения идут через фасад MapInstance", "Before: every component talks to Redux and the xyflow API directly. After: everything goes through the MapInstance facade")}>
       <Markers id={id} />
       {panel(24, false)}
       {panel(248, true)}
@@ -327,6 +331,7 @@ export function FacadeVisual() {
 
 /* 4. Крепление стрелок: 30 фиксированных хендлов против одной точки в долях рамки */
 export function HandlesVisual() {
+  const tr = useT();
   const reduce = useReducedMotion();
   const id = useMarkerId();
 
@@ -386,23 +391,23 @@ export function HandlesVisual() {
   });
 
   return (
-    <Svg label="Было около 30 фиксированных точек крепления на элемент, стала одна: стрелка хранит позицию в долях рамки и крепится в любую точку границы">
+    <Svg label={tr("Было около 30 фиксированных точек крепления на элемент, стала одна: стрелка хранит позицию в долях рамки и крепится в любую точку границы", "Before: about 30 fixed handles per element. After: one, the edge stores its position as fractions of the bounding box and attaches anywhere on the border")}>
       <Markers id={id} />
 
       {/* было */}
       <rect x="24" y="48" width="208" height="288" rx="12" className={boxCls} />
-      <text x="40" y="76" className={monoCls}>было</text>
+      <text x="40" y="76" className={monoCls}>{tr("было", "before")}</text>
       <text x="128" y="104" textAnchor="middle" className="fill-ink font-display text-[20px] font-semibold">30</text>
       <rect x={L.x} y={L.y} width={L.w} height={L.h} rx="10" className={subCls} />
       {[...old, ...extra].map(([x, y], i) => (
         <circle key={i} cx={x} cy={y} r={3} className="fill-ink-2 stroke-surface" strokeWidth={1.5} />
       ))}
       <text x="128" y="304" textAnchor="middle" className={monoCls}>node-id + handle-id</text>
-      <text x="128" y="322" textAnchor="middle" className="fill-ink-3 text-[11px]">на 1000 элементов падала вкладка</text>
+      <text x="128" y="322" textAnchor="middle" className="fill-ink-3 text-[11px]">{tr("на 1000 элементов падала вкладка", "1000 elements crashed the tab")}</text>
 
       {/* стало */}
       <rect x="248" y="48" width="208" height="288" rx="12" className="fill-surface stroke-accent/50" />
-      <text x="264" y="76" className="fill-accent font-mono text-[11px]">стало</text>
+      <text x="264" y="76" className="fill-accent font-mono text-[11px]">{tr("стало", "after")}</text>
       <text x="352" y="104" textAnchor="middle" className="fill-accent font-display text-[20px] font-semibold">1</text>
       <rect x={R.x} y={R.y} width={R.w} height={R.h} rx="10" className={subCls} />
       <motion.text x={R.x + R.w / 2} y={R.y + R.h / 2 + 4} textAnchor="middle" className="fill-ink-2 font-mono text-[10.5px]">
@@ -412,8 +417,8 @@ export function HandlesVisual() {
       <rect x={src.x} y={src.y - 14} width="48" height="28" rx="8" className={subCls} />
       <motion.path d={d} className="fill-none stroke-accent" strokeWidth={1.6} markerEnd={`url(#${id}-h)`} />
       <motion.circle cx={cx} cy={cy} r={4} className="fill-accent stroke-surface" strokeWidth={2} />
-      <text x="352" y="304" textAnchor="middle" className={monoCls}>node-id + доли рамки</text>
-      <text x="352" y="322" textAnchor="middle" className="fill-ink-3 text-[11px]">крепится в любую точку границы</text>
+      <text x="352" y="304" textAnchor="middle" className={monoCls}>{tr("node-id + доли рамки", "node-id + bbox fractions")}</text>
+      <text x="352" y="322" textAnchor="middle" className="fill-ink-3 text-[11px]">{tr("крепится в любую точку границы", "attaches anywhere on the border")}</text>
     </Svg>
   );
 }

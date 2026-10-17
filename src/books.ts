@@ -9,11 +9,13 @@ export type Book = {
   ink: string;
   url: string;
   note?: string;
+  en: { title: string; author: string; initials: string };
 };
 
 export const books: Book[] = [
   {
     title: "Накопительный эффект",
+    en: {"title": "The Compound Effect", "author": "Darren Hardy", "initials": "DH"},
     author: "Даррен Харди",
     initials: "ДХ",
     cover: "compound-effect.jpg",
@@ -24,6 +26,7 @@ export const books: Book[] = [
   },
   {
     title: "Номер 1",
+    en: {"title": "Number 1", "author": "Igor Mann", "initials": "IM"},
     author: "Игорь Манн",
     initials: "ИМ",
     cover: "number-one.jpg",
@@ -34,6 +37,7 @@ export const books: Book[] = [
   },
   {
     title: "Грокаем алгоритмы",
+    en: {"title": "Grokking Algorithms", "author": "Aditya Bhargava", "initials": "AB"},
     author: "Адитья Бхаргава",
     initials: "АБ",
     cover: "grokking-algorithms.jpg",
@@ -44,6 +48,7 @@ export const books: Book[] = [
   },
   {
     title: "Чистый код",
+    en: {"title": "Clean Code", "author": "Robert C. Martin", "initials": "RM"},
     author: "Роберт Мартин",
     initials: "РМ",
     cover: "clean-code.jpg",
@@ -54,6 +59,7 @@ export const books: Book[] = [
   },
   {
     title: "Дизайнер интерфейсов",
+    en: {"title": "Interface Designer", "author": "Ilya Sidorenko", "initials": "IS"},
     author: "Илья Сидоренко",
     initials: "ИС",
     cover: "interface-designer.jpg",
@@ -64,6 +70,7 @@ export const books: Book[] = [
   },
   {
     title: "Спортивная анатомия",
+    en: {"title": "Sports Anatomy", "author": "Torsten Gerke", "initials": "TG"},
     author: "Торстен Герке",
     initials: "ТГ",
     cover: "sport-anatomy.jpg",
@@ -74,6 +81,7 @@ export const books: Book[] = [
   },
   {
     title: "Lagom",
+    en: {"title": "Lagom", "author": "Lola A. Åkerström", "initials": "LÅ"},
     author: "Лола Экерстрём",
     initials: "ЛЭ",
     cover: "lagom.jpg",

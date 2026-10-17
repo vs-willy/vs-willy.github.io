@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLang } from "../i18n";
 
 // Живая погода в Москве под именем. Open-Meteo бесплатный и без ключа.
 // Ответ кэшируется на 15 минут, при ошибке остается просто «Москва».
@@ -12,6 +13,23 @@ type Kind = "sun" | "moon" | "partly" | "cloud" | "fog" | "drizzle" | "rain" | "
 type Now = { t: number; code: number; day: boolean };
 
 // коды погоды WMO в слова и иконку
+const EN: Record<string, string> = {
+  ясно: "clear",
+  "почти ясно": "mostly clear",
+  "переменная облачность": "partly cloudy",
+  пасмурно: "overcast",
+  туман: "fog",
+  морось: "drizzle",
+  "небольшой дождь": "light rain",
+  дождь: "rain",
+  "сильный дождь": "heavy rain",
+  "небольшой снег": "light snow",
+  снег: "snow",
+  ливень: "showers",
+  снегопад: "snowfall",
+  гроза: "thunderstorm",
+};
+
 function describe(code: number, day: boolean): { text: string; kind: Kind } {
   if (code === 0) return { text: "ясно", kind: day ? "sun" : "moon" };
   if (code === 1) return { text: "почти ясно", kind: day ? "sun" : "moon" };
@@ -64,6 +82,7 @@ function readCache(): Now | null {
 }
 
 export function Weather() {
+  const lang = useLang();
   const [now, setNow] = useState<Now | null>(() => readCache());
 
   useEffect(() => {
@@ -84,16 +103,16 @@ export function Weather() {
     return () => ctrl.abort();
   }, [now]);
 
-  if (!now) return <span>Москва</span>;
+  if (!now) return <span>{lang === "en" ? "Moscow" : "Москва"}</span>;
   const { text, kind } = describe(now.code, now.day);
   const t = Math.round(now.t);
   const temp = `${t > 0 ? "+" : t < 0 ? "-" : ""}${Math.abs(t)}°`;
   return (
-    <span className="inline-flex items-center gap-2" title="Погода сейчас, Open-Meteo">
+    <span className="inline-flex items-center gap-2" title={lang === "en" ? "Current weather, Open-Meteo" : "Погода сейчас, Open-Meteo"}>
       <Icon kind={kind} />
       <span>
-        В Москве {temp}
-        {text && `, ${text}`}
+        {lang === "en" ? `${temp} in Moscow` : `В Москве ${temp}`}
+        {text && `, ${lang === "en" ? EN[text] ?? text : text}`}
       </span>
     </span>
   );

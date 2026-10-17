@@ -4,6 +4,7 @@ import "@fontsource-variable/onest";
 import "@fontsource-variable/jetbrains-mono";
 import "./index.css";
 import { App } from "./App";
+import { initAnalytics } from "./analytics";
 
 // Тема по умолчанию светлая, выбор из дока запоминается
 try {
@@ -12,6 +13,8 @@ try {
 } catch {
   /* без localStorage остается светлая */
 }
+
+initAnalytics();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

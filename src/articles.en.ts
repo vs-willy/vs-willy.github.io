@@ -2,6 +2,113 @@
 import type { Article } from "./articles";
 
 export const articlesEn: Record<string, Article> = {
+  lct: {
+    lead: "The Moscow Mayor's «Leaders of Digital Transformation» competition, a task from the Moscow IT Department. The service takes a district as GeoJSON and in about 17 seconds returns up to three options for a shared heating network that reaches every new building. And the route doesn't follow the shortest path, it follows the one a design engineer would draw.",
+    role: "Frontend and the pitch",
+    team: "3 people, team «Rezonans»",
+    duration: "September-October 2026",
+    links: [{ label: "Leaders of Digital Transformation", href: "https://i.moscow/lct" }],
+    blocks: [
+      { h: "The case" },
+      {
+        p: "The eighth LCT season: 20 tasks from companies and city departments, with 1,828 teams across the whole season after selection. We took city task No. 2, «Heating network routing», from the Moscow Department of Information Technology.",
+      },
+      {
+        p: "When new buildings go up in a district, each one needs heat from the existing network. A design engineer usually draws the route by hand. The task was to build a service that looks at the district map, proposes a shared network for all the new buildings and prices it.",
+      },
+      {
+        p: "We didn't pick it by chance. Our captain is a lead engineer and a heat supply expert who used to produce heating network routing packages himself, and he had wanted to automate this routine for a long time.",
+      },
+      {
+        timeline: [
+          { when: "Sep 29", what: "First submission" },
+          { when: "Oct 20", what: "Final version and the defense" },
+          { when: "Oct 30", what: "Awards at LCT.Fest" },
+        ],
+      },
+      { h: "A route like an engineer's" },
+      {
+        p: "The core idea: the shortest path is not a good route yet. An engineer lays out a network by certain rules, and the service has to follow them.",
+      },
+      {
+        list: [
+          "the main line runs along the streets",
+          "branches only at chambers",
+          "the building inlet is perpendicular to the wall",
+          "no turns sharper than 90°",
+          "one tree for all buildings, no loops",
+        ],
+      },
+      {
+        flow: [
+          { title: "Free space", note: "no-go zones, offsets" },
+          { title: "Street graph", note: "driveways, facades" },
+          { title: "Network tree", note: "one for all buildings", accent: true },
+          { title: "Refinement" },
+          { title: "Pipe sizes, cost, check" },
+        ],
+        caption: "How the network is built",
+      },
+      {
+        p: "The input is one GeoJSON in WGS 84, and we compute in meters in UTM 37N. First comes the free space with no-go zones and offsets, then the street graph: driveway axes, lines along facades and inlets perpendicular to the wall. One network tree for all buildings is built on top of it. Pipe diameters are picked from the summed flow, then the cost and the final score of the option. There is also a mode that accounts for burial depth and one that accounts for existing utilities.",
+      },
+      {
+        code: "S = 0.7 · C / 25M + 0.3 · L / 100",
+        caption: "How the options are ranked: C is cost, L is length, lower is better",
+      },
+      { h: "Rewriting the solver" },
+      {
+        p: "The first version searched for the shortest path, and the routes didn't look like an engineer's: kinks and extra turns everywhere. Our captain corrected the route by hand six times on the LCT dataset, and based on those edits we rewrote the algorithm around the street graph.",
+      },
+      {
+        p: "For edits like these the service has a route editor: an engineer opens the generated network, drags vertices, straightens angles, moves a branch onto the main line, and the length updates right away. The difference from the original route shows what to change in the algorithm.",
+      },
+      {
+        compare: [
+          {
+            title: "First submission, shortest path",
+            items: ["288.8M ₽", "score 13.76", "38 turns", "16 new chambers", "1,892 m"],
+          },
+          {
+            title: "Final, street graph",
+            items: ["277.6M ₽, 11.2M cheaper", "score 13.50", "19 turns", "13 new chambers", "1,908 m"],
+          },
+        ],
+        caption: "The network got 17 m longer but cheaper: the main line follows the street and there are half as many turns",
+      },
+      { h: "Result" },
+      {
+        stats: [
+          { value: "17 of 17", label: "connection points, zero penalty" },
+          { value: "1,908 m", label: "of new network, 13 chambers, 3 tie-ins" },
+          { value: "277.6M ₽", label: "best option, computed in about 17 s" },
+        ],
+      },
+      {
+        p: "The second option came out a million cheaper but longer, so it ranked second. The outcome: 2nd place in the task and a prize winner diploma of the Moscow Mayor's award competition.",
+      },
+      {
+        p: "Next, the network could be taken all the way to working documentation: fittings, supports, expansion joints, strength calculations, drawings and a bill of materials. And the same approach carries over to water, sewage and gas, up to designing all of a district's networks together in shared corridors.",
+      },
+      { h: "My part" },
+      {
+        p: "The frontend: the map, the option comparison and the interface shown at the demo. At the defense I ran the presentation part and kept us on time, while a teammate ran the demo.",
+      },
+      { h: "Third hackathon on one platform" },
+      {
+        p: "Just like at ROBOZON and KosmoHackathon, we didn't start from scratch. We added a third domain to our Praxis platform on C#/.NET and React. The only thing written from zero here was the route solver.",
+      },
+      {
+        flow: [
+          { title: "ROBOZON", note: "sorting center" },
+          { title: "KosmoHackathon", note: "fuel depot" },
+          { title: "LCT", note: "heating networks", accent: true },
+        ],
+        caption: "Three Praxis domains in one autumn",
+      },
+    ],
+  },
+
   kosmohackathon: {
     lead: "Three days, 40 teams in our case, and a task that was about economics, not rockets: how to keep an orbital fuel depot supplied. We plugged the case into our own simulation platform and defended a plan that survives the mandatory 2038 stress test.",
     role: "Interface and the pitch",
@@ -191,6 +298,10 @@ export const articlesEn: Record<string, Article> = {
       },
       { h: "Takeaway" },
       { p: "The experience of a first hackathon win. And the understanding that you win with the right team and the right tactics." },
+      { h: "What came next" },
+      {
+        p: "The engine didn't stay a hackathon one-off. It grew into our Praxis platform, an idea our architect came up with, and we later solved KosmoHackathon and LCT on it.",
+      },
     ],
   },
 

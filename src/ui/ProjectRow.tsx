@@ -8,7 +8,7 @@ import { Logo, logoSrc } from "./Logo";
 // Миниатюра проекта: логотип места, где он сделан, в точечном стиле
 export function ProjectThumb({ p, big }: { p: Project; big?: boolean }) {
   const lang = useLang();
-  const wide = p.logo === "robozon";
+  const wide = p.logo === "robozon" || p.logo === "lct";
   return (
     <Dither
       src={logoSrc(p.logo)}
@@ -34,7 +34,7 @@ export function ProjectRow({ p }: { p: Project }) {
         className="group flex items-center gap-3 py-2.5 transition"
       >
         <span className="grid h-10 w-16 shrink-0 place-items-center rounded-[6px] border border-line bg-surface text-ink transition group-hover:text-accent-ink">
-          <Logo name={p.logo} className={p.logo === "robozon" ? "h-3 w-12" : p.logo === "pix" ? "h-3.5 w-6" : p.logo === "virtuum" ? "h-5 w-3" : "h-5 w-7"} />
+          <Logo name={p.logo} className={p.logo === "robozon" ? "h-3 w-12" : p.logo === "pix" ? "h-3.5 w-6" : p.logo === "virtuum" ? "h-5 w-3" : p.logo === "lct" ? "h-5 w-10" : "h-5 w-7"} />
         </span>
         <span className="min-w-0">
           <span className="block truncate font-medium text-ink transition group-hover:text-accent-ink">{x.title}</span>

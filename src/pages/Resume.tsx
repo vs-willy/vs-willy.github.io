@@ -47,6 +47,7 @@ const RU = {
     },
   ] as Job[],
   hacks: [
+    { what: "ЛЦТ 2026, 2 место", note: "Призер премии мэра Москвы. Сервис трассировки тепловых сетей по задаче ДИТ Москвы, на мне фронт и защита" },
     { what: "КосмоХакатон СПб, 1 место", note: "Роскосмос и МИРЭА, 2026. Стратегия снабжения орбитального узла и событийная проверка плана" },
     { what: "РОБОЗОН от Ozon Tech, 2 место", note: "2026, около 1000 команд в треке. Свой движок симуляции сортировочного центра, на мне фронт и 3D" },
   ],
@@ -93,6 +94,7 @@ const EN: typeof RU = {
     },
   ],
   hacks: [
+    { what: "LCT 2026, 2nd place", note: "Moscow Mayor's award prize winner. Heating network routing service for the Moscow IT Department, I did the frontend and the pitch" },
     { what: "KosmoHackathon St. Petersburg, 1st place", note: "Roscosmos and MIREA, 2026. Supply strategy for an orbital depot with an event-driven plan check" },
     { what: "ROBOZON by Ozon Tech, 2nd place", note: "2026, about 1,000 teams in the track. Our own sorting center simulation engine, I did the frontend and 3D" },
   ],

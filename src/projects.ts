@@ -1,7 +1,7 @@
 // Проекты: рабочие задачи, разложенные как кейсы. Факты из материалов по карьере, без внутренних цифр PIX.
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
-export type Logo = "pix" | "virtuum" | "kosmo" | "robozon";
+export type Logo = "pix" | "virtuum" | "kosmo" | "robozon" | "lct";
 export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm";
 
 export type Project = {
@@ -19,6 +19,32 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  {
+    slug: "lct",
+    en: {"title": "LCT 2026: 2nd place", "summary": "A service that lays out a heating network for new buildings the way a design engineer would, in about 17 seconds", "date": "Oct 2026", "result": "Prize winner of the Moscow Mayor's award"},
+    title: "ЛЦТ 2026: 2 место",
+    summary: "Сервис, который за 17 секунд прокладывает тепловую сеть к новым зданиям так, как ее вел бы инженер-проектировщик",
+    company: "Хакатон",
+    date: "окт 2026",
+    sort: 202610,
+    logo: "lct",
+    stack: ["C#/.NET", "React", "GeoJSON"],
+    result: "Призер премии мэра Москвы",
+    sections: [
+      {
+        title: "Кейс",
+        text: "Задача ДИТ Москвы «Трассировка тепловых сетей»: по GeoJSON района проложить общую тепловую сеть ко всем новым зданиям.",
+      },
+      {
+        title: "Решение",
+        text: "Третий домен нашей платформы Praxis. Решатель маршрутов написали с нуля: трасса идет по улицам, ветвится в камерах и входит в здание перпендикулярно стене, как ее вел бы проектировщик.",
+      },
+      {
+        title: "Моя часть",
+        text: "Фронтенд: карта, сравнение вариантов и интерфейс для демо. И презентационная часть защиты.",
+      },
+    ],
+  },
   {
     slug: "kosmohackathon",
     en: {"title": "KosmoHackathon St. Petersburg: 1st place", "summary": "A fuel supply strategy for an orbital depot and an event-driven simulation that checks the plan", "date": "Sep 2026", "result": "1st place, Roscosmos and MIREA"},

@@ -92,7 +92,10 @@ export const articlesEn: Record<string, Article> = {
       },
       { h: "My part" },
       {
-        p: "The frontend: the map, the option comparison and the interface shown at the demo. At the defense I ran the presentation part and kept us on time, while a teammate ran the demo.",
+        p: "The frontend: the map, the option comparison and the interface shown at the demo. I also built how the route gets drawn on the map, so I watched up close how the solver puts the network together piece by piece, and I used the route editor a lot as one of its users. I didn't build the editor itself, but I took part in the team's decisions on improving it.",
+      },
+      {
+        p: "At the defense I ran the presentation part and kept us on time, while a teammate ran the demo.",
       },
       { h: "Third hackathon on one platform" },
       {
@@ -105,6 +108,10 @@ export const articlesEn: Record<string, Article> = {
           { title: "LCT", note: "heating networks", accent: true },
         ],
         caption: "Three Praxis domains in one autumn",
+      },
+      { h: "Takeaway" },
+      {
+        p: "Heating networks were a completely unfamiliar field for me: I came into the task as a frontend developer and didn't expect it to be this interesting. Chambers, tie-ins, pipe sizes, the rules an engineer follows when laying out a route - every choice on the map has its own logic behind it. Figuring it out together with our captain, who had done this for years, was maybe the best part of the hackathon.",
       },
     ],
   },

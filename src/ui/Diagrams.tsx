@@ -1,4 +1,4 @@
-import { useId } from "react";
+import { useEffect, useId, useRef } from "react";
 import { useT } from "../i18n";
 import { motion, useReducedMotion } from "motion/react";
 import { CheckCircle, XCircle } from "@phosphor-icons/react";
@@ -239,5 +239,158 @@ export function KosmoPlansDiagram() {
         </li>
       ))}
     </ul>
+  );
+}
+
+// РОБОЗОН: упрощенная линия сортировочного центра, по которой едут посылки.
+// Рисуем в координатах «вдоль потока» (m) и «поперек» (c): на широком экране поток идет слева направо, на телефоне сверху вниз
+const RZ_LANES = [40, 100, 160];
+const RZ_BOXES = 10;
+const RZ_DUR = 6;
+
+function RobozonLineSvg({ vertical }: { vertical: boolean }) {
+  const tr = useT();
+  const reduce = useReducedMotion();
+  const boxRefs = useRef<(SVGRectElement | null)[]>([]);
+  const P = (m: number, c: number) => (vertical ? [c, m] : [m, c]);
+  const pt = (m: number, c: number) => P(m, c).join(" ");
+  const rectAt = (m: number, c: number, lm: number, lc: number) => {
+    const [x, y] = P(m - lm / 2, c - lc / 2);
+    const [w, h] = vertical ? [lc, lm] : [lm, lc];
+    return { x, y, width: w, height: h };
+  };
+  // подпись узла: на широком экране под ним, на телефоне справа
+  const label = (m: number, c: number, off: number, text: string, sub?: string) => {
+    const [x, y] = vertical ? [c + off, m - (sub ? 3 : -4)] : [m, c + off + 10];
+    const anchor = vertical ? "start" : "middle";
+    return (
+      <g>
+        <text x={x} y={y} textAnchor={anchor} className="fill-ink text-[12.5px] font-semibold">{text}</text>
+        {sub && <text x={x} y={y + 15} textAnchor={anchor} className="fill-ink-3 text-[11px]">{sub}</text>}
+      </g>
+    );
+  };
+  // маршрут посылки: по конвейеру до сортера и дальше по своему желобу в лоток
+  const route = (lane: number) => [[36, 100], [338, 100], [436, lane], [468, lane]].map(([m, c]) => P(m, c));
+  const boxes = Array.from({ length: RZ_BOXES }, (_, i) => ({ lane: RZ_LANES[[1, 0, 2, 1, 2, 0, 1, 2, 0, 1][i]], i }));
+  const [vw, vh] = vertical ? [250, 540] : [540, 236];
+
+  useEffect(() => {
+    const place = (t: number) => {
+      boxes.forEach(({ lane, i }) => {
+        const el = boxRefs.current[i];
+        if (!el) return;
+        const pts = route(lane);
+        const seg = pts.slice(1).map((q, k) => Math.hypot(q[0] - pts[k][0], q[1] - pts[k][1]));
+        const total = seg.reduce((a, b) => a + b, 0);
+        const ph = (t + i / RZ_BOXES) % 1;
+        // 90% цикла посылка едет, остаток лежит в лотке и гаснет
+        let d = Math.min(ph / 0.9, 1) * total;
+        let k = 0;
+        while (k < seg.length - 1 && d > seg[k]) d -= seg[k++];
+        const f = seg[k] ? d / seg[k] : 0;
+        const x = pts[k][0] + (pts[k + 1][0] - pts[k][0]) * f;
+        const y = pts[k][1] + (pts[k + 1][1] - pts[k][1]) * f;
+        el.setAttribute("transform", `translate(${x} ${y})`);
+        el.setAttribute("opacity", String(ph < 0.04 ? ph / 0.04 : ph > 0.9 ? Math.max(0, 1 - (ph - 0.9) / 0.1) : 1));
+      });
+    };
+    if (reduce) {
+      place(0.25);
+      return;
+    }
+    let raf = 0;
+    const t0 = performance.now();
+    const tick = (now: number) => {
+      place(((now - t0) / 1000 / RZ_DUR) % 1);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+    // маршруты зависят только от ориентации
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [vertical, reduce]);
+
+  return (
+    <svg
+      viewBox={vertical ? `0 0 ${vw} ${vh}` : `-30 0 ${vw + 30} ${vh}`}
+      className="h-auto w-full"
+      role="img"
+      aria-label={tr(
+        "Упрощенная линия: посылки приходят из источника, едут по конвейеру, индукция подает их на сортер с нужным зазором, сортер раскладывает их по лоткам направлений",
+        "A simplified line: parcels arrive from the source, ride the conveyor, the induction feeds them onto the sorter with the right gap, and the sorter drops them into chutes by destination",
+      )}
+    >
+      {/* конвейер с бегущей лентой */}
+      <path d={`M${pt(52, 100)} L${pt(298, 100)}`} className="stroke-surface-2" strokeWidth={18} strokeLinecap="round" />
+      <path d={`M${pt(52, 100)} L${pt(298, 100)}`} className="stroke-line-strong" strokeWidth={1.5} strokeDasharray="3 9">
+        {!reduce && <animate attributeName="stroke-dashoffset" from="12" to="0" dur="0.5s" repeatCount="indefinite" />}
+      </path>
+
+      {/* желоба от сортера к лоткам */}
+      {RZ_LANES.map((c) => (
+        <path key={c} d={`M${pt(342, 100)} L${pt(436, c)} L${pt(452, c)}`} className="fill-none stroke-line-strong" strokeWidth={1.5} />
+      ))}
+
+      {/* источник */}
+      <rect {...rectAt(30, 100, 44, 44)} rx="8" className="fill-surface-2 stroke-line-strong" />
+      {label(30, 100, 34, tr("Источник", "Source"), tr("приходят партиями", "arrive in batches"))}
+
+      {/* подпись конвейера */}
+      {label(130, 100, 22, tr("Конвейер", "Conveyor"))}
+
+      {/* индукция: ворота на ленте */}
+      <rect {...rectAt(222, 100, 6, 34)} rx="2" className="fill-ink-3" />
+      {label(222, 100, 26, tr("Индукция", "Induction"), tr("выдает с зазором", "spaces them out"))}
+
+      {/* сортер */}
+      <rect {...rectAt(326, 100, 40, 58)} rx="8" className="fill-accent-soft stroke-accent" strokeWidth={1.5} />
+      {label(326, 100, 38, tr("Сортер", "Sorter"), tr("решает, куда", "decides where"))}
+
+      {/* лотки направлений */}
+      {RZ_LANES.map((c) => (
+        <rect key={c} {...rectAt(474, c, 40, 30)} rx="5" className="fill-surface-2 stroke-line-strong" />
+      ))}
+      {vertical ? (
+        <g>
+          <text x={100} y={518} textAnchor="middle" className="fill-ink text-[12.5px] font-semibold">{tr("Лотки направлений", "Destination chutes")}</text>
+          <text x={100} y={533} textAnchor="middle" className="fill-ink-3 text-[11px]">{tr("дальше затаривание", "then bagging")}</text>
+        </g>
+      ) : (
+        <g>
+          <text x={474} y={200} textAnchor="middle" className="fill-ink text-[12.5px] font-semibold">{tr("Лотки", "Chutes")}</text>
+          <text x={474} y={215} textAnchor="middle" className="fill-ink-3 text-[11px]">{tr("по направлениям", "by destination")}</text>
+        </g>
+      )}
+
+      {/* посылки: позиции двигает цикл анимации ниже */}
+      {boxes.map(({ lane, i }) => (
+        <rect
+          key={i}
+          ref={(el) => {
+            boxRefs.current[i] = el;
+          }}
+          x="-5"
+          y="-5"
+          width="10"
+          height="10"
+          rx="2"
+          className={lane === 40 ? "fill-accent" : "fill-ink-2"}
+        />
+      ))}
+    </svg>
+  );
+}
+
+export function RobozonLineDiagram() {
+  return (
+    <>
+      <div className="hidden sm:block">
+        <RobozonLineSvg vertical={false} />
+      </div>
+      <div className="mx-auto max-w-[300px] sm:hidden">
+        <RobozonLineSvg vertical />
+      </div>
+    </>
   );
 }

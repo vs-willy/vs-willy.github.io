@@ -231,16 +231,8 @@ export const articlesEn: Record<string, Article> = {
         p: "The core is a discrete-event simulation: an event queue on a `PriorityQueue` keyed by (time, sequence number), with model time jumping from event to event. A run goes all at once or step by step through `RunUntil`, which is the mode for the RL agent.",
       },
       {
-        flow: [
-          { title: "Source", note: "batches" },
-          { title: "Conveyor" },
-          { title: "Induction", note: "feed rate" },
-          { title: "Sorter", note: "chutes", accent: true },
-          { title: "Tray", note: "buffer" },
-          { title: "Packing" },
-          { title: "Sink" },
-        ],
-        caption: "Our own library of sorting center nodes",
+        figure: "robozonLine",
+        caption: "A simplified line built from our node library. The hackathon model had about 40 destinations",
       },
       {
         p: "**Two-phase backpressure.** A node first checks whether there's room and only then commits to accepting an item. If there's no room, the previous node holds the item, and the jam propagates upstream by itself, just like in a real sorting center, without special rules.",
@@ -268,10 +260,6 @@ export const articlesEn: Record<string, Article> = {
       },
       { h: "Takeaway" },
       { p: "The experience of a first hackathon win. And the understanding that you win with the right team and the right tactics." },
-      { h: "What came next" },
-      {
-        p: "The engine didn't stay a hackathon one-off. It grew into our Praxis platform, an idea our architect came up with, and we later solved KosmoHackathon and LCT on it.",
-      },
     ],
   },
 

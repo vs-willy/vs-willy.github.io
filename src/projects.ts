@@ -2,7 +2,7 @@
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
 export type Logo = "pix" | "virtuum" | "kosmo" | "robozon" | "lct";
-export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm";
+export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes";
 
 export type Project = {
   slug: string;
@@ -37,7 +37,7 @@ export const projects: Project[] = [
       },
       {
         title: "Решение",
-        text: "Третий домен нашей платформы Praxis. Решатель маршрутов написали с нуля: трасса идет по улицам, ветвится в камерах и входит в здание перпендикулярно стене, как ее вел бы проектировщик.",
+        text: "Решатель маршрутов написали с нуля: трасса идет по улицам, ветвится в камерах и входит в здание перпендикулярно стене, как ее вел бы проектировщик.",
       },
       {
         title: "Моя часть",

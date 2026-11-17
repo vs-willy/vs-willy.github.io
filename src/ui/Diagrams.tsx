@@ -109,3 +109,83 @@ export function KkmDiagram() {
     </svg>
   );
 }
+
+// ЛЦТ: одна и та же улица и три новых здания. Слева трасса кратчайшим путем, справа так, как ее ведет инженер
+const LCT_HOUSES = [
+  { x: 40, y: 22, w: 64, h: 50 },
+  { x: 160, y: 26, w: 76, h: 46 },
+  { x: 96, y: 156, w: 72, h: 46 },
+];
+
+function LctPanel({ kind }: { kind: "short" | "engineer" }) {
+  const tr = useT();
+  const src = { x: 14, y: 114 };
+  const eng = kind === "engineer";
+  // кратчайший путь: напрямую к ближайшему углу здания, через двор и под углом к стене
+  const shortRoutes = ["M14 114 L40 72", "M14 114 L160 72", "M14 114 L96 156"];
+  // инженер: магистраль по оси улицы, ответвления в камерах, вводы перпендикулярно стене
+  const chambers = [72, 132, 198];
+  return (
+    <svg
+      viewBox="0 0 260 216"
+      className="h-auto w-full"
+      role="img"
+      aria-label={
+        eng
+          ? tr("Трасса как у инженера: магистраль идет по улице, ответвления в камерах, каждый ввод перпендикулярен стене здания", "An engineer's route: the main line follows the street, branches leave at chambers, every inlet is perpendicular to the building wall")
+          : tr("Кратчайший путь: трассы идут напрямую через дворы и подходят к зданиям под углом", "Shortest path: routes cut straight across yards and reach the buildings at an angle")
+      }
+    >
+      {/* улица */}
+      <rect x="0" y="100" width="260" height="28" className="fill-surface-2" />
+      <path d="M0 114 H260" className="stroke-line-strong" strokeDasharray="6 6" />
+      <text x="252" y="96" textAnchor="end" className="fill-ink-3 text-[10px]">{tr("улица", "street")}</text>
+
+      {/* новые здания */}
+      {LCT_HOUSES.map((h, i) => (
+        <rect key={i} x={h.x} y={h.y} width={h.w} height={h.h} rx="3" className="fill-surface stroke-ink-3" />
+      ))}
+
+      {eng ? (
+        <>
+          <path d="M14 114 H198" className="fill-none stroke-accent" strokeWidth={2.5} strokeLinecap="round" />
+          <path d="M72 114 V72 M198 114 V72 M132 114 V156" className="fill-none stroke-accent" strokeWidth={1.75} />
+          {chambers.map((x) => (
+            <rect key={x} x={x - 4.5} y={109.5} width="9" height="9" className="fill-bg stroke-accent" strokeWidth={1.5} />
+          ))}
+        </>
+      ) : (
+        shortRoutes.map((d) => <path key={d} d={d} className="fill-none stroke-ink-2" strokeWidth={1.75} />)
+      )}
+
+      {/* врезка в действующую сеть */}
+      <circle cx={src.x} cy={src.y} r="5" className="fill-ink" />
+    </svg>
+  );
+}
+
+export function LctRoutesDiagram() {
+  const tr = useT();
+  return (
+    <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
+      <div className="min-w-0">
+        <div className="mb-2 text-[13px] font-medium text-ink-2">{tr("Кратчайший путь", "Shortest path")}</div>
+        <LctPanel kind="short" />
+      </div>
+      <div className="min-w-0">
+        <div className="mb-2 text-[13px] font-medium text-ink">{tr("Как ведет инженер", "How an engineer lays it out")}</div>
+        <LctPanel kind="engineer" />
+      </div>
+      <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-ink-2 sm:col-span-2">
+        <span className="inline-flex items-center gap-2">
+          <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-ink" />
+          {tr("врезка в действующую сеть", "tie-in to the existing network")}
+        </span>
+        <span className="inline-flex items-center gap-2">
+          <span aria-hidden className="h-2.5 w-2.5 border-[1.5px] border-accent" />
+          {tr("камера", "chamber")}
+        </span>
+      </div>
+    </div>
+  );
+}

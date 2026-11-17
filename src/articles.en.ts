@@ -40,25 +40,15 @@ export const articlesEn: Record<string, Article> = {
         ],
       },
       {
-        flow: [
-          { title: "Free space", note: "no-go zones, offsets" },
-          { title: "Street graph", note: "driveways, facades" },
-          { title: "Network tree", note: "one for all buildings", accent: true },
-          { title: "Refinement" },
-          { title: "Pipe sizes, cost, check" },
-        ],
-        caption: "How the network is built",
+        figure: "lctRoutes",
+        caption: "Schematic, on a made-up block: the same buildings, two routes",
       },
       {
-        p: "The input is one GeoJSON in WGS 84, and we compute in meters in UTM 37N. First comes the free space with no-go zones and offsets, then the street graph: driveway axes, lines along facades and inlets perpendicular to the wall. One network tree for all buildings is built on top of it. Pipe diameters are picked from the summed flow, then the cost and the final score of the option. There is also a mode that accounts for burial depth and one that accounts for existing utilities.",
-      },
-      {
-        code: "S = 0.7 · C / 25M + 0.3 · L / 100",
-        caption: "How the options are ranked: C is cost, L is length, lower is better",
+        p: "The input is one GeoJSON in WGS 84, and we compute in meters in UTM 37N. First comes the free space with no-go zones and offsets, then the street graph: driveway axes, lines along facades and inlets perpendicular to the wall. One network tree for all buildings is built on top of it. Pipe diameters are picked from the summed flow, then the cost is computed, and the options are compared on price and length. There is also a mode that accounts for burial depth and one that accounts for existing utilities.",
       },
       { h: "Rewriting the solver" },
       {
-        p: "The first version searched for the shortest path, and the routes didn't look like an engineer's: kinks and extra turns everywhere. Our captain corrected the route by hand six times on the LCT dataset, and based on those edits we rewrote the algorithm around the street graph.",
+        p: "We wrote the route solver from scratch, and the first version searched for the shortest path. The routes didn't look like an engineer's: kinks and extra turns everywhere. Our captain corrected the route by hand six times on the LCT dataset, and based on those edits we rewrote the algorithm around the street graph.",
       },
       {
         p: "For edits like these the service has a route editor: an engineer opens the generated network, drags vertices, straightens angles, moves a branch onto the main line, and the length updates right away. The difference from the original route shows what to change in the algorithm.",
@@ -96,18 +86,6 @@ export const articlesEn: Record<string, Article> = {
       },
       {
         p: "At the defense I ran the presentation part and kept us on time, while a teammate ran the demo.",
-      },
-      { h: "Third hackathon on one platform" },
-      {
-        p: "Just like at ROBOZON and KosmoHackathon, we didn't start from scratch. We added a third domain to our Praxis platform on C#/.NET and React. The only thing written from zero here was the route solver.",
-      },
-      {
-        flow: [
-          { title: "ROBOZON", note: "sorting center" },
-          { title: "KosmoHackathon", note: "fuel depot" },
-          { title: "LCT", note: "heating networks", accent: true },
-        ],
-        caption: "Three Praxis domains in one autumn",
       },
       { h: "Takeaway" },
       {

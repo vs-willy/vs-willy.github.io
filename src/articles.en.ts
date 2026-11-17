@@ -465,78 +465,28 @@ export const articlesEn: Record<string, Article> = {
   },
 
   "design-system": {
-    lead: "PIX UI is three npm packages that give the company's products a shared look: icons straight from Figma, design tokens and components on Ant Design 5. I develop the packages, the designers draw. In November 2026 I gave an internal tech talk about them.",
+    lead: "I set up the PIX UI design system at the company: three npm packages that give our products a shared look. Icons, design tokens and components on Ant Design 5. I develop the packages, the designers draw.",
     role: "All three packages",
     team: "Solo, together with the design team",
     duration: "Since March 2025, ongoing",
     blocks: [
-      { h: "Why our own packages" },
+      { h: "Why" },
       {
-        p: "Before, every product lived with its own copy of icons, colors and theme. Fixes were carried over by hand into each product, and the copies drifted apart. Mistakes went unnoticed: one place had `state-blue` instead of `slate-blue`, and nobody saw it. And the theme was half someone else's: in places buttons were painted Ant Design's stock blue instead of ours.",
+        p: "Before, every product lived with its own copy of icons, colors and theme. Fixes were carried over by hand into each product, the copies drifted apart, and nobody noticed the mistakes. We needed a single source of truth for every product.",
       },
-      { p: "We needed a single source of truth. It came together piece by piece:" },
+      { h: "What came out of it" },
+      { figure: "packagesOverview", caption: "The three PIX UI packages" },
       {
-        timeline: [
-          { when: "March 2025", what: "First version of the icons package" },
-          { when: "Summer 2026", what: "Tokens package: colors, typography, shadows" },
-          { when: "November 2026", what: "Components package: the draft is done, review is underway" },
-        ],
-      },
-      { h: "Icons" },
-      {
-        p: "It all started with them. Icons were exported from Figma by hand, and everyone did it their own way. When I dug through the git history of one of the products, here is what turned up:",
+        p: "I started with icons: they used to be exported from Figma by hand, everyone in their own way. Now one command pulls them from Figma, and not a single icon is edited by hand. Tokens came next, and the components are under review now: each one is checked against its Figma mockup by an automated test.",
       },
       {
-        list: [
-          "every author had their own naming style: `Icon_Delete.svg`, `check_mark.svg`, `down-arrow.svg`",
-          "commits for a single letter when someone changed the case of a file name",
-          "typos forever, because renaming means a search across the whole codebase: `CulumnChooser.svg`",
-          "14 different sizes and grays baked into the files, so an icon couldn't be recolored",
-          "the Spanish flag weighed 251 KB, 430 times more than the Russian one: the whole coat of arms ended up in the file",
-        ],
-      },
-      { figure: "iconsBeforeAfter", caption: "From a mockup to an icon on screen" },
-      {
-        p: "Now one command, `npm run build`, does everything: icons are pulled from Figma via the API, SVGO cleans them up and switches the color to `currentColor`, SVGR turns the SVGs into React components, and the build outputs CJS, ESM and types. A CI job publishes the package. Not a single icon is edited by hand, and the component name matches the mockup, so both people and AI agents understand it.",
-      },
-      {
-        p: "There were pitfalls too. Ungrouped layers broke the converter, a stray space in a name crashed the export, and emotion icons with images inside had clashing ids, so I had to prefix them. A lot of it we fixed together with the designers right in Figma.",
-      },
-      { h: "Tokens" },
-      {
-        p: "Semantics and typography were first collected on one live product and then moved into a shared package. Tokens live in JSON in three layers: primitives, meaning palettes; semantics like `brand.primary` or `bg.default` with values for the light and dark themes; and a build into CSS variables, SCSS, TS constants and types. The theme switches with a single attribute on any ancestor.",
-      },
-      { figure: "tokensTheme", caption: "That's why only semantics are exported: they know the theme, a primitive doesn't" },
-      {
-        p: "So products can move to tokens without manual work, the package ships a codemod. First it finds old tokens and builds a config, then it previews the replacements, then it applies them. A separate CI mode fails while migration is still needed. Running it again changes nothing.",
-      },
-      { h: "Components" },
-      {
-        p: "This is Ant Design in our design. Storybook has 66 components in two themes right now. I moved the draft over with AI help, and from there every component goes through three stages: a visual check in both themes, a check against Figma, and developer experience, meaning props, types and documentation.",
-      },
-      { figure: "componentKinds", caption: "Three kinds of components" },
-      {
-        p: "The Figma check is a test. A snapshot of the mockup from the Figma API sits next to the code, and a browser test compares colors, sizes, radii and spacing. If a component drifts from the mockup, CI fails like with any other test. You can't check behavior and animation this way, only styles, and that's an honest limitation.",
-      },
-      {
-        p: "The checks paid off fast. We found buttons painted Ant Design blue, text that blended into the background in the dark theme, and a dozen issues with one cause: Ant Design centers icons only with its own class, and our SVGs don't carry it. Icons drifted upward in steps, menus, trees, tables and a few more components. One fix in the container was enough.",
-      },
-      { h: "What's next" },
-      {
-        list: [
-          "publish the components and connect the first product",
-          "move the three packages into a monorepo with shared CI, so a token or icon change runs the component tests right away",
-          "run the codemod in every product",
-          "add tokens for spacing, radii, layers and motion",
-          "add linters against hex colors and direct antd imports",
-          "take variables straight from Figma",
-        ],
+        p: "The packages live in the company's private registry, CI builds and publishes them, and products install them like any other npm dependency. Storybook has a catalog of icons, palettes and components. In November 2026 I gave an internal tech talk about the system.",
       },
       { h: "Result" },
       {
         stats: [
-          { value: "775", label: "icons from Figma, none edited by hand" },
-          { value: "142", label: "semantic tokens for the light and dark themes" },
+          { value: "3", label: "npm packages: icons, tokens, components" },
+          { value: "775", label: "icons from Figma with no manual work" },
           { value: "3 of 4", label: "company products already on the packages" },
         ],
       },

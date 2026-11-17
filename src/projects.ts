@@ -2,7 +2,7 @@
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
 export type Logo = "pix" | "virtuum" | "kosmo" | "robozon" | "lct";
-export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine" | "e2eCase" | "igorContext" | "iconsBeforeAfter" | "tokensTheme" | "componentKinds";
+export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine" | "e2eCase" | "igorContext" | "packagesOverview";
 
 export type Project = {
   slug: string;

@@ -448,7 +448,7 @@ export const articlesEn: Record<string, Article> = {
       },
       {
         figure: "igorContext",
-        caption: "An illustrative demo: the answers are prewritten, but it works the same way. Change the section or the selection and ask again",
+        caption: "An illustrative example: a short question, and the assistant already knows what it's about",
       },
       { quote: "Not a chat in a vacuum, but an assistant that knows where you are." },
       { h: "Streaming and animations" },

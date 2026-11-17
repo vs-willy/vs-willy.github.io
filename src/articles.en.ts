@@ -315,7 +315,7 @@ export const articlesEn: Record<string, Article> = {
   },
 
   e2e: {
-    lead: "The product had zero e2e tests. I built an architecture on Playwright where developers hide the system's complexity inside Page Objects and testers write scenarios on top of ready-made classes. There are about two hundred tests now, and more every month.",
+    lead: "The product had zero e2e tests. I built an architecture on Playwright where all of the system's complexity lives inside Page Objects. Testers write test cases, and we, the developers, turn them into automated tests. There are about two hundred tests now, and more every month.",
     role: "Test architecture",
     team: "4-5 testers and about 10 developers",
     duration: "2026, ongoing",
@@ -332,38 +332,17 @@ export const articlesEn: Record<string, Article> = {
       { p: "We picked Playwright to have one tool for everything: it was already used for API tests." },
       { h: "Architecture" },
       {
-        p: "The core idea is splitting the roles. A developer prepares and maintains a Page Object and hides all the system's complexity inside it. A tester writes the scenario on top of the ready classes in a strict DSL. Every Page Object method is wrapped in a step, so reports read like documentation.",
+        p: "All of the system's complexity is hidden inside Page Objects: how to find an element on the canvas, how to wait for the map to open, how to press the right button. The test itself stays short and only describes behavior. Every Page Object method is wrapped in a step, so the report reads almost like the original test case.",
       },
       {
-        flow: [
-          { title: "Developer", note: "Page Object and environment" },
-          { title: "Tester", note: "scenario", accent: true },
-          { title: "Pipeline" },
-          { title: "Quality control", note: "results via API" },
-        ],
-        caption: "Who owns what",
+        figure: "e2eCase",
+        caption: "An illustrative example: every step of a test case becomes a line or two of the automated test",
       },
       {
         p: "Maps have their own environment builder: all preconditions go through it, so a test starts right from the state it needs. Video and tracing come from Playwright out of the box, and a colleague set up the Allure reports.",
       },
       {
-        code: `// Scenario: how a tester writes it
-test('undoing a delete brings the element back with its edge', async ({ page }) => {
-  const map = await MapEnvironment.create(page)
-    .withTask('Prepare goods')
-    .withTask('Sell goods')
-    .withEdge('Prepare goods', 'Sell goods')
-    .open();
-
-  await map.element('Sell goods').delete();
-  await map.expectElementsCount(1);
-
-  await map.toolbar.undo();
-  await map.expectElementsCount(2);
-  await map.expectEdge('Prepare goods', 'Sell goods');
-});
-
-// Page Object: prepared and maintained by a developer
+        code: `// Page Object: hides how the canvas works and wraps the action in a report step
 export class CanvasElement {
   constructor(private page: Page, private name: string) {}
 
@@ -387,11 +366,13 @@ export class CanvasElement {
       {
         p: "We didn't rush: first we wrote 100 tests and used them to check that the architecture holds up. Then another 100 for related features. We barely changed anything along the way, because we'd thought it through in advance.",
       },
-      { h: "Getting QA on board" },
+      { h: "Who writes the tests" },
       {
-        p: "To get testers writing scenarios themselves, I taught them how to work with Page Objects and reminded them that every feature has a responsible developer to talk to. The tech lead and I also gave a talk about the test pyramid at an internal meetup.",
+        p: "At first the plan was for testers to write scenarios themselves on top of ready-made Page Objects, and I taught them how to work with them. Over time a different setup stuck: testers prepare test cases, and we, the developers, write the automated tests from them. Testers know best what to check, and we know how to automate it reliably.",
       },
-      { quote: "Tests aren't one person's guerrilla war, they're a dance between several departments." },
+      {
+        p: "It only works with agreements between teams: every feature has a responsible developer the tester works things out with. The tech lead and I also gave a talk about the test pyramid at an internal meetup.",
+      },
       {
         p: "With flaky tests the rule is simple: if a test fails every other run, the problem is either in the test or in the feature. More than once a «flaky» test caught a real bug.",
       },

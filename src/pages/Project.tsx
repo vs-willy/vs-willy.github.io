@@ -9,7 +9,7 @@ import { href } from "../router";
 import { sound } from "../sound";
 import { Code, Compare, Figure, Flow, Note, Quote, Rich, Stats, Timeline } from "../ui/ArticleBlocks";
 import { CommandsVisual, FacadeVisual, HandlesVisual, ListenersVisual } from "../ui/CanvasVisuals";
-import { DesignSystemDiagram, KkmDiagram, KosmoPlansDiagram, LctRoutesDiagram, RobozonLineDiagram } from "../ui/Diagrams";
+import { DesignSystemDiagram, KkmDiagram, KosmoPlansDiagram, LctRoutesDiagram, RobozonLineDiagram, E2eCaseDiagram } from "../ui/Diagrams";
 import { ProjectThumb } from "../ui/ProjectRow";
 
 const diagrams: Record<DiagramKey, () => React.ReactNode> = {
@@ -22,10 +22,11 @@ const diagrams: Record<DiagramKey, () => React.ReactNode> = {
   lctRoutes: () => <LctRoutesDiagram />,
   kosmoPlans: () => <KosmoPlansDiagram />,
   robozonLine: () => <RobozonLineDiagram />,
+  e2eCase: () => <E2eCaseDiagram />,
 };
 
 // Эти схемы сами перестраиваются под узкий экран, им не нужна минимальная ширина
-const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles"]);
+const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles", "e2eCase"]);
 
 const sid = (i: number) => `s-${i}`;
 

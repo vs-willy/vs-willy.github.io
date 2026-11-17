@@ -2,7 +2,7 @@
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
 export type Logo = "pix" | "virtuum" | "kosmo" | "robozon" | "lct";
-export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine";
+export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine" | "e2eCase";
 
 export type Project = {
   slug: string;
@@ -166,7 +166,7 @@ export const projects: Project[] = [
     sections: [
       {
         title: "Архитектура",
-        text: "Page Objects со строгим DSL: разработчики готовят и поддерживают Page Object'ы и прячут в них всю сложность системы, тестировщики пишут сценарии поверх готовых классов. Каждый метод оборачивается в шаг, поэтому отчеты читаются как документация.",
+        text: "Page Objects прячут всю сложность системы. Тестировщики описывают тест-кейсы, а разработчики пишут по ним автотесты. Каждый метод оборачивается в шаг, поэтому отчет читается почти как исходный тест-кейс.",
       },
       {
         title: "С чего начали",

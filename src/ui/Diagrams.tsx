@@ -394,3 +394,65 @@ export function RobozonLineDiagram() {
     </>
   );
 }
+
+// E2E: тестировщик пишет тест-кейс обычными словами, разработчик переводит каждый шаг в автотест
+export function E2eCaseDiagram() {
+  const tr = useT();
+  const steps = [
+    {
+      n: "1",
+      text: tr("Создать задачи «Подготовка товара» и «Продажа товара», соединить стрелкой", "Create tasks «Prepare goods» and «Sell goods», connect them with an edge"),
+      code: tr(
+        "MapEnvironment.create(page)\n  .withTask('Подготовка товара')\n  .withTask('Продажа товара')\n  .withEdge(...).open()",
+        "MapEnvironment.create(page)\n  .withTask('Prepare goods')\n  .withTask('Sell goods')\n  .withEdge(...).open()",
+      ),
+    },
+    {
+      n: "2",
+      text: tr("Удалить «Продажа товара»", "Delete «Sell goods»"),
+      code: tr("map.element('Продажа товара')\n  .delete()", "map.element('Sell goods')\n  .delete()"),
+    },
+    { n: "3", text: tr("Нажать «Отменить»", "Click «Undo»"), code: "map.toolbar.undo()" },
+    {
+      n: "✓",
+      text: tr("На карте снова два элемента, стрелка на месте", "Both elements are back, and so is the edge"),
+      code: "map.expectElementsCount(2)\nmap.expectEdge(...)",
+      result: true,
+    },
+  ];
+  return (
+    <div>
+      <p className="mb-3 text-[12.5px] leading-snug text-ink-3 sm:hidden">
+        {tr("Шаг пишет тестировщик, код под ним - разработчик", "A tester writes the step, a developer writes the code under it")}
+      </p>
+      <div className="mb-3 hidden grid-cols-[24px_minmax(0,1fr)_minmax(0,1.15fr)] gap-x-4 sm:grid">
+        <span />
+        <div>
+          <div className="text-[13px] font-medium text-ink">{tr("Тест-кейс", "Test case")}</div>
+          <div className="text-[12.5px] text-ink-3">{tr("пишет тестировщик", "written by a tester")}</div>
+        </div>
+        <div>
+          <div className="text-[13px] font-medium text-accent-ink">{tr("Автотест", "Automated test")}</div>
+          <div className="text-[12.5px] text-ink-3">{tr("пишет разработчик", "written by a developer")}</div>
+        </div>
+      </div>
+      <ol className="divide-y divide-line border-y border-line">
+        {steps.map((s) => (
+          <li key={s.n} className="grid grid-cols-[24px_minmax(0,1fr)] gap-x-4 gap-y-2 py-3 sm:grid-cols-[24px_minmax(0,1fr)_minmax(0,1.15fr)]">
+            <span
+              aria-hidden
+              className={`mt-px grid h-6 w-6 place-items-center rounded-full text-[12px] font-semibold ${s.result ? "bg-accent text-white" : "bg-surface-2 text-ink-2"}`}
+            >
+              {s.n}
+            </span>
+            <div className={`text-[14px] leading-snug ${s.result ? "font-medium text-ink" : "text-ink-2"}`}>
+              {s.result && <span className="sr-only">{tr("Ожидаемый результат: ", "Expected result: ")}</span>}
+              {s.text}
+            </div>
+            <pre className="col-start-2 overflow-x-auto rounded-md bg-surface-2 px-3 py-2 font-mono text-[12px] leading-[1.55] text-ink-2 sm:col-start-3">{s.code}</pre>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}

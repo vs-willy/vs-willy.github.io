@@ -167,16 +167,17 @@ function LctPanel({ kind }: { kind: "short" | "engineer" }) {
 export function LctRoutesDiagram() {
   const tr = useT();
   return (
-    <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
+    <div className="grid gap-5 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-6">
       <div className="min-w-0">
         <div className="mb-2 text-[13px] font-medium text-ink-2">{tr("Кратчайший путь", "Shortest path")}</div>
         <LctPanel kind="short" />
       </div>
+      <div aria-hidden className="h-px bg-line sm:h-auto sm:w-px" />
       <div className="min-w-0">
         <div className="mb-2 text-[13px] font-medium text-ink">{tr("Как ведет инженер", "How an engineer lays it out")}</div>
         <LctPanel kind="engineer" />
       </div>
-      <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-ink-2 sm:col-span-2">
+      <div className="flex flex-wrap gap-x-5 gap-y-1 text-[12.5px] text-ink-2 sm:col-span-3">
         <span className="inline-flex items-center gap-2">
           <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-ink" />
           {tr("врезка в действующую сеть", "tie-in to the existing network")}

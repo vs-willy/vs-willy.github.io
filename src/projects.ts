@@ -2,7 +2,7 @@
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
 export type Logo = "pix" | "virtuum" | "kosmo" | "robozon" | "lct";
-export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine" | "e2eCase";
+export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine" | "e2eCase" | "igorContext";
 
 export type Project = {
   slug: string;
@@ -231,7 +231,7 @@ export const projects: Project[] = [
     date: "2025",
     sort: 202506,
     logo: "pix",
-    stack: ["React", "стриминг", "Semantic Kernel"],
+    stack: ["React", "WebSocket", "Semantic Kernel"],
     sections: [
       {
         title: "Моя часть",

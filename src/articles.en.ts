@@ -447,14 +447,8 @@ export const articlesEn: Record<string, Article> = {
         p: "The main frontend piece is the situational model, that is, the assistant's integration with every module of the product. Along with the question, the assistant gets context: where the user is right now, what they've selected and which map is open.",
       },
       {
-        flow: [
-          { title: "Section", note: "canvas, Process Mining" },
-          { title: "Selection", note: "objects" },
-          { title: "Map", note: "project" },
-          { title: "Request", note: "with context", accent: true },
-          { title: "IIgor" },
-        ],
-        caption: "What the assistant knows about the user when they ask",
+        figure: "igorContext",
+        caption: "An illustrative demo: the answers are prewritten, but it works the same way. Change the section or the selection and ask again",
       },
       { quote: "Not a chat in a vacuum, but an assistant that knows where you are." },
       { h: "Streaming and animations" },

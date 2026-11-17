@@ -353,8 +353,8 @@ function HandlesSvg({ viewBox }: { viewBox?: string }) {
   // двойная точка: вторая лежит под первой со сдвигом, как стопка
   const Pair = ({ x, y }: { x: number; y: number }) => (
     <g>
-      <circle cx={x + 3} cy={y + 3} r={3.8} className="fill-ink-3 stroke-surface" strokeWidth={1.5} />
-      <circle cx={x - 1.2} cy={y - 1.2} r={3.8} className="fill-ink stroke-surface" strokeWidth={1.5} />
+      <circle cx={x + 2.2} cy={y + 2.2} r={3} className="fill-ink-3 stroke-surface" strokeWidth={1.25} />
+      <circle cx={x - 0.8} cy={y - 0.8} r={3} className="fill-ink-2 stroke-surface" strokeWidth={1.25} />
     </g>
   );
 

@@ -381,24 +381,6 @@ export const articles: Record<string, Article> = {
       {
         p: "Для карты есть отдельный конструктор окружения: через него делаются все предусловия, и тест сразу начинается с нужного состояния. Видео и трейсинг стандартными средствами Playwright, Allure-отчеты настраивал коллега.",
       },
-      {
-        code: `// Page Object: прячет, как устроен канвас, и оборачивает действие в шаг отчета
-export class CanvasElement {
-  constructor(private page: Page, private name: string) {}
-
-  async delete() {
-    await test.step(\`Удалить элемент «\${this.name}»\`, async () => {
-      await this.locator().click();
-      await this.page.keyboard.press('Delete');
-    });
-  }
-
-  private locator() {
-    return this.page.getByTestId('canvas-node').filter({ hasText: this.name });
-  }
-}`,
-        caption: "Условный пример: названия придуманы, это не код продукта",
-      },
       { h: "Начали с самого сложного" },
       {
         p: "Первыми покрыли undo/redo. Чтобы было что отменять, пришлось довести до рабочего состояния многие функции канваса, и это дало базу, на которой остальные тесты добавлялись быстро.",

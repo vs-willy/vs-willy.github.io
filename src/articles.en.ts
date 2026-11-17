@@ -341,24 +341,6 @@ export const articlesEn: Record<string, Article> = {
       {
         p: "Maps have their own environment builder: all preconditions go through it, so a test starts right from the state it needs. Video and tracing come from Playwright out of the box, and a colleague set up the Allure reports.",
       },
-      {
-        code: `// Page Object: hides how the canvas works and wraps the action in a report step
-export class CanvasElement {
-  constructor(private page: Page, private name: string) {}
-
-  async delete() {
-    await test.step(\`Delete element "\${this.name}"\`, async () => {
-      await this.locator().click();
-      await this.page.keyboard.press('Delete');
-    });
-  }
-
-  private locator() {
-    return this.page.getByTestId('canvas-node').filter({ hasText: this.name });
-  }
-}`,
-        caption: "An illustrative example: names are made up, this isn't product code",
-      },
       { h: "Starting with the hardest part" },
       {
         p: "We covered undo/redo first. To have something to undo, we had to get many canvas features working properly, and that gave us a base on which the rest of the tests came quickly.",

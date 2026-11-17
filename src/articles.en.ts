@@ -477,10 +477,16 @@ export const articlesEn: Record<string, Article> = {
       { h: "What came out of it" },
       { figure: "packagesOverview", caption: "The three PIX UI packages" },
       {
-        p: "I started with icons: they used to be exported from Figma by hand, everyone in their own way. Now one command pulls them from Figma, and not a single icon is edited by hand. Tokens came next, and the components are under review now: each one is checked against its Figma mockup by an automated test.",
+        p: "**Icons.** That's where it started: icons used to be exported from Figma by hand, everyone in their own way. One product had 14 different icon sizes, and the Spanish flag weighed 251 KB because the whole coat of arms ended up in the file. Now one command pulls icons from Figma via the API, cleans them up and turns them into React components. Every icon is its own component with the same name as in the mockup, and size and color are set with props. Not a single one is edited by hand.",
       },
       {
-        p: "The packages live in the company's private registry, CI builds and publishes them, and products install them like any other npm dependency. Storybook has a catalog of icons, palettes and components. In November 2026 I gave an internal tech talk about the system.",
+        p: "**Tokens.** Semantics and typography were first collected on one live product and then moved into a shared package. That's 18 palettes and 142 semantic tokens with values for the light and dark themes, built into CSS variables, SCSS and typed TS constants. The theme switches with one attribute. To move products onto tokens, the package ships a codemod that finds old values and replaces them on its own.",
+      },
+      {
+        p: "**Components.** This is Ant Design 5 in our design: some components are simply re-exported, some are wrapped, and whatever Ant Design lacks we write ourselves. A linter forbids importing antd directly in a product. Storybook has 66 components in two themes right now, and each one goes through review: visually, against the mockup, and for developer experience. The Figma check is a test, so drifting from the mockup fails CI.",
+      },
+      {
+        p: "All packages live in the company's private registry, CI builds and publishes them, and products install them like any other npm dependency. In November 2026 I gave an internal tech talk about the system. Next up: publishing the components and moving the three packages into a monorepo with shared CI.",
       },
       { h: "Result" },
       {

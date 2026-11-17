@@ -397,29 +397,31 @@ export const articlesEn: Record<string, Article> = {
       {
         p: "The team lead suggested writing our own engine. I was against it: we'd have to build it from scratch and would drown in maintaining it. I proposed my own concept, showed an MVP and got the green light.",
       },
-      { quote: "The problem wasn't the tool, it was how we used it." },
       { h: "Commands" },
       {
-        p: "A user action becomes a command. It goes to the backend alone or in a batch and is rolled back if it isn't applied. That gives undo/redo and fits Event Sourcing on the backend. The Executor applies the changes that come from the server via SignalR.",
+        p: "Every user action becomes a command. On the canvas it applies right away, and it goes to the backend alone or in a batch. If the server doesn't accept it, the command is rolled back. Undo and redo come almost for free: they're just the inverse command. And all of it fits nicely with Event Sourcing, which the backend is built on.",
       },
-      { figure: "commands", caption: "An action becomes a command, the server confirms it, the Executor applies the result" },
+      { figure: "commands", caption: "Try it: move the element, undo, then ask the server to reject a command" },
+      {
+        p: "The Executor works in the other direction: it applies the changes the server sends via SignalR to the map, like edits from colleagues working on the same map.",
+      },
       { h: "Listeners" },
       {
         p: "@xyflow/react events arrive as usual, but before reaching the state they pass through listeners. There are two hooks, for elements and for edges: they check, correct, extend or block a change. All the logic for changing a map lives in one place instead of being spread across components.",
       },
-      { figure: "listeners", caption: "Every change goes through a listener first" },
+      { figure: "listeners", caption: "Illustrative examples: what a listener can do with a change" },
       { h: "MapInstance" },
       {
-        p: "A single typed entry point to the canvas state: selection, positions, navigation, data loading. No direct Redux access and no breaking the rules of hooks. Plus its own store for the canvas instead of Redux, so elements re-render less.",
+        p: "Before, every developer got canvas data their own way: some through Redux, some through xyflow, some straight from the store. MapInstance is a single typed entry point: selection, positions, navigation, data loading. Underneath it there's a dedicated canvas store instead of Redux, so elements re-render less.",
       },
-      { figure: "facade", caption: "One door into the canvas for the whole team" },
+      { figure: "facade", caption: "An illustrative example: getting the selected elements, before and after" },
       { h: "Rolling it out" },
       {
         p: "The rework went on in parallel with regular development, without a code freeze. We switched to the new architecture all at once, and everything shipped in one release. Before merging into the main branch I held a session with all developers to walk them through the new architecture.",
       },
       { h: "Result" },
       {
-        p: "Nothing changed for users, but technically we grew up. All map changes go through one model of commands and listeners, the team has one entry point into the canvas, elements re-render less, and a bug gets fixed in one place instead of in every component.",
+        p: "Users didn't notice a thing, and that was the point. Meanwhile all map changes go through one model of commands and listeners, the team has one entry point into the canvas, elements re-render less, and a bug gets fixed in one place instead of in every component.",
       },
       { h: "Takeaway" },
       { p: "Sometimes it's worth looking at how a technology is used before replacing it with another one." },

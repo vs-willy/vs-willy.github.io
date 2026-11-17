@@ -106,7 +106,7 @@ export const projects: Project[] = [
     date: "2025-2026",
     sort: 202607,
     logo: "pix",
-    stack: ["@xyflow/react", "TypeScript", "миграция данных"],
+    stack: ["@xyflow/react", "React", "TypeScript"],
     result: "Карта на 1000 элементов открывается за 1,7 с вместо падения вкладки, памяти уходит в 2,5-3 раза меньше",
     sections: [
       {

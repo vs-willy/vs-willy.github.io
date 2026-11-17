@@ -275,10 +275,10 @@ export const articlesEn: Record<string, Article> = {
       },
       { h: "Where the slowness came from" },
       {
-        p: "I started by counting the DOM inside each element and profiling map opening in DevTools Performance. There were far too many handles: three on each side at 25, 50 and 75% of its length, separately for incoming and outgoing edges, plus corners and service handles.",
+        p: "I started by counting the DOM nodes inside each element and profiling map opening in DevTools Performance. There were far too many handles: three spots on each side, at 25, 50 and 75% of its length, and every spot held two handles at once, one for incoming and one for outgoing edges. Plus corners and service handles.",
       },
       {
-        list: ["3 handles × 4 sides × 2 (in and out) = **24**", "4 corner handles for callouts", "1 handle for the whole element", "1 handle for the quick connector"],
+        list: ["3 spots × 4 sides × 2 handles (in and out) = **24**", "4 corner handles for callouts", "1 handle for the whole element", "1 handle for the quick connector"],
       },
       {
         p: "An edge stored the element id and the id of one handle from that fixed set, and xyflow drew the line itself. Large maps crashed the tab, and edges could only attach at those fixed points.",
@@ -286,7 +286,7 @@ export const articlesEn: Record<string, Article> = {
       { figure: "handles", caption: "About 30 handles per element before, one that slides along the border after" },
       { h: "One handle instead of thirty" },
       {
-        p: "In the new model an edge stores the element id and a position as fractions of the element's bounding box, from the top-left corner, and there's a single handle id shared by all elements. Instead of a scatter of handles there's one anchor that runs along the whole border and snaps to the grid every 10 px.",
+        p: "In the new model an edge stores the element id and its position as fractions of the element's bounding box, counted from the top-left corner. Every element now has the same single handle: an anchor that runs along the whole border and snaps to a 10 px grid.",
       },
       {
         p: "That allowed attaching anywhere on the border, but I had to write the logic for how a line leaves and enters an element myself: the library only does it from fixed handles. I proposed the approach and fitted it to the product's business requirements together with an analyst. The idea had been around for about a year, but business priorities kept it on hold.",

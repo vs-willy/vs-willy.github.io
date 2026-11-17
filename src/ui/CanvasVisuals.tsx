@@ -14,9 +14,9 @@ const titleCls = "fill-ink text-[13px] font-semibold";
 const monoCls = "fill-ink-3 font-mono text-[10.5px]";
 const edgeCls = "fill-none stroke-ink-3";
 
-function Svg({ label, children }: { label: string; children: React.ReactNode }) {
+function Svg({ label, children, viewBox }: { label: string; children: React.ReactNode; viewBox?: string }) {
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={label}>
+    <svg viewBox={viewBox ?? `0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label={label}>
       {children}
     </svg>
   );
@@ -330,24 +330,33 @@ export function FacadeVisual() {
 }
 
 /* 4. Крепление стрелок: 30 фиксированных хендлов против одной точки в долях рамки */
-export function HandlesVisual() {
+function HandlesSvg({ viewBox }: { viewBox?: string }) {
   const tr = useT();
   const reduce = useReducedMotion();
   const id = useMarkerId();
 
   // Левая панель: элемент со всеми старыми хендлами
   const L = { x: 56, y: 136, w: 144, h: 88 };
-  const old: [number, number][] = [];
+  // на сторонах по три места, и в каждом сразу две точки: для входящей и для исходящей стрелки
+  const pairs: [number, number][] = [];
   for (const f of [0.25, 0.5, 0.75]) {
-    for (const o of [-4, 4]) {
-      old.push([L.x + L.w * f + o, L.y], [L.x + L.w * f + o, L.y + L.h], [L.x, L.y + L.h * f + o], [L.x + L.w, L.y + L.h * f + o]);
-    }
+    pairs.push([L.x + L.w * f, L.y], [L.x + L.w * f, L.y + L.h], [L.x, L.y + L.h * f], [L.x + L.w, L.y + L.h * f]);
   }
-  old.push([L.x, L.y], [L.x + L.w, L.y], [L.x, L.y + L.h], [L.x + L.w, L.y + L.h]);
-  const extra: [number, number][] = [
+  const single: [number, number][] = [
+    [L.x, L.y],
+    [L.x + L.w, L.y],
+    [L.x, L.y + L.h],
+    [L.x + L.w, L.y + L.h],
     [L.x + L.w / 2, L.y + L.h / 2],
     [L.x + L.w - 14, L.y + 14],
   ];
+  // двойная точка: вторая лежит под первой со сдвигом, как стопка
+  const Pair = ({ x, y }: { x: number; y: number }) => (
+    <g>
+      <circle cx={x + 3} cy={y + 3} r={3.8} className="fill-ink-3 stroke-surface" strokeWidth={1.5} />
+      <circle cx={x - 1.2} cy={y - 1.2} r={3.8} className="fill-ink stroke-surface" strokeWidth={1.5} />
+    </g>
+  );
 
   // Правая панель: элемент и точка, которая едет по периметру
   const R = { x: 296, y: 136, w: 144, h: 88 };
@@ -391,7 +400,7 @@ export function HandlesVisual() {
   });
 
   return (
-    <Svg label={tr("Было около 30 фиксированных точек крепления на элемент, стала одна: стрелка хранит позицию в долях рамки и крепится в любую точку границы", "Before: about 30 fixed handles per element. After: one, the edge stores its position as fractions of the bounding box and attaches anywhere on the border")}>
+    <Svg viewBox={viewBox} label={tr("Было около 30 фиксированных точек крепления на элемент, стала одна: стрелка хранит позицию в долях рамки и крепится в любую точку границы", "Before: about 30 fixed handles per element. After: one, the edge stores its position as fractions of the bounding box and attaches anywhere on the border")}>
       <Markers id={id} />
 
       {/* было */}
@@ -399,9 +408,16 @@ export function HandlesVisual() {
       <text x="40" y="76" className={monoCls}>{tr("было", "before")}</text>
       <text x="128" y="104" textAnchor="middle" className="fill-ink font-display text-[20px] font-semibold">30</text>
       <rect x={L.x} y={L.y} width={L.w} height={L.h} rx="10" className={subCls} />
-      {[...old, ...extra].map(([x, y], i) => (
+      {single.map(([x, y], i) => (
         <circle key={i} cx={x} cy={y} r={3} className="fill-ink-2 stroke-surface" strokeWidth={1.5} />
       ))}
+      {pairs.map(([x, y], i) => (
+        <Pair key={i} x={x} y={y} />
+      ))}
+      {/* пояснение к двойной точке */}
+      <Pair x={64} y={262} />
+      <text x="76" y="261" className="fill-ink-2 text-[11px]">{tr("две в одном месте:", "two in one spot:")}</text>
+      <text x="76" y="275" className="fill-ink-3 text-[11px]">{tr("вход и выход стрелки", "edge in and out")}</text>
       <text x="128" y="304" textAnchor="middle" className={monoCls}>node-id + handle-id</text>
       <text x="128" y="322" textAnchor="middle" className="fill-ink-3 text-[11px]">{tr("на 1000 элементов падала вкладка", "1000 elements crashed the tab")}</text>
 
@@ -420,6 +436,21 @@ export function HandlesVisual() {
       <text x="352" y="304" textAnchor="middle" className={monoCls}>{tr("node-id + доли рамки", "node-id + bbox fractions")}</text>
       <text x="352" y="322" textAnchor="middle" className="fill-ink-3 text-[11px]">{tr("крепится в любую точку границы", "attaches anywhere on the border")}</text>
     </Svg>
+  );
+}
+
+// На широком экране обе панели рядом, на телефоне друг под другом, чтобы подписи не мельчили
+export function HandlesVisual() {
+  return (
+    <>
+      <div className="hidden sm:block">
+        <HandlesSvg />
+      </div>
+      <div className="mx-auto grid max-w-[260px] gap-4 sm:hidden">
+        <HandlesSvg viewBox="20 44 216 296" />
+        <HandlesSvg viewBox="244 44 216 296" />
+      </div>
+    </>
   );
 }
 

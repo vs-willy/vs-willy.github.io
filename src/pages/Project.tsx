@@ -25,7 +25,7 @@ const diagrams: Record<DiagramKey, () => React.ReactNode> = {
 };
 
 // Эти схемы сами перестраиваются под узкий экран, им не нужна минимальная ширина
-const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine"]);
+const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles"]);
 
 const sid = (i: number) => `s-${i}`;
 

@@ -11,6 +11,7 @@ import { Code, Compare, Figure, Flow, Note, Quote, Rich, Stats, Timeline } from 
 import { CommandsDemo, FacadeCompare, ListenersTable } from "../ui/CanvasDemos";
 import { HandlesVisual } from "../ui/CanvasVisuals";
 import { IgorDemo } from "../ui/IgorDemo";
+import { ComponentKinds, IconsBeforeAfter, TokensTheme } from "../ui/DesignSystemVisuals";
 import { DesignSystemDiagram, KkmDiagram, KosmoPlansDiagram, LctRoutesDiagram, RobozonLineDiagram, E2eCaseDiagram } from "../ui/Diagrams";
 import { ProjectThumb } from "../ui/ProjectRow";
 
@@ -26,10 +27,13 @@ const diagrams: Record<DiagramKey, () => React.ReactNode> = {
   robozonLine: () => <RobozonLineDiagram />,
   e2eCase: () => <E2eCaseDiagram />,
   igorContext: () => <IgorDemo />,
+  iconsBeforeAfter: () => <IconsBeforeAfter />,
+  tokensTheme: () => <TokensTheme />,
+  componentKinds: () => <ComponentKinds />,
 };
 
 // Эти схемы сами перестраиваются под узкий экран, им не нужна минимальная ширина
-const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles", "e2eCase", "commands", "listeners", "facade", "igorContext"]);
+const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles", "e2eCase", "commands", "listeners", "facade", "igorContext", "iconsBeforeAfter", "tokensTheme", "componentKinds"]);
 
 const sid = (i: number) => `s-${i}`;
 

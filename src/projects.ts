@@ -2,7 +2,7 @@
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
 export type Logo = "pix" | "virtuum" | "kosmo" | "robozon" | "lct";
-export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine" | "e2eCase" | "igorContext";
+export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans" | "robozonLine" | "e2eCase" | "igorContext" | "iconsBeforeAfter" | "tokensTheme" | "componentKinds";
 
 export type Project = {
   slug: string;
@@ -176,11 +176,11 @@ export const projects: Project[] = [
   },
   {
     slug: "design-system",
-    en: {"title": "Design system of 3 npm packages", "summary": "A UI library on top of Ant Design 5, 740+ icons from Figma and design tokens", "date": "2025", "result": "Used by 3 of the company's 4 products"},
+    en: {"title": "Design system of 3 npm packages", "summary": "Icons straight from Figma, design tokens and components on Ant Design 5", "date": "2025-2026", "result": "Used by 3 of the company's 4 products"},
     title: "Дизайн-система из 3 npm-пакетов",
-    summary: "UI-библиотека поверх Ant Design 5, 740+ иконок из Figma и дизайн-токены",
+    summary: "Иконки прямо из Figma, дизайн-токены и компоненты на Ant Design 5",
     company: "PIX Robotics",
-    date: "2025",
+    date: "2025-2026",
     sort: 202504,
     logo: "pix",
     stack: ["Ant Design 5", "SVGO", "SVGR", "GitLab Registry"],

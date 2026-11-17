@@ -2,7 +2,7 @@
 
 export type Company = "PIX Robotics" | "ВиртуумЛаб" | "Хакатон";
 export type Logo = "pix" | "virtuum" | "kosmo" | "robozon" | "lct";
-export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes";
+export type DiagramKey = "commands" | "listeners" | "facade" | "handles" | "designSystem" | "kkm" | "lctRoutes" | "kosmoPlans";
 
 export type Project = {
   slug: string;
@@ -63,7 +63,7 @@ export const projects: Project[] = [
       },
       {
         title: "Решение",
-        text: "Встроили кейс вторым доменом в нашу платформу Praxis, а не писали проект заново. Получилось два слоя: помесячная модель выбора стратегии снабжения и событийная симуляция, которая независимо пересчитывает запас и проверяет, исполним ли план на уровне отдельных поставок.",
+        text: "Получилось два слоя: помесячная модель выбора стратегии снабжения и событийная симуляция, которая независимо пересчитывает запас и проверяет, исполним ли план на уровне отдельных поставок.",
       },
       {
         title: "Моя часть",

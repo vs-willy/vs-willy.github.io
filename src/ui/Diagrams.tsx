@@ -1,6 +1,7 @@
 import { useId } from "react";
 import { useT } from "../i18n";
 import { motion, useReducedMotion } from "motion/react";
+import { CheckCircle, XCircle } from "@phosphor-icons/react";
 
 // Как устроена дизайн-система: откуда берутся пакеты и куда они уходят
 export function DesignSystemDiagram() {
@@ -188,5 +189,55 @@ export function LctRoutesDiagram() {
         </span>
       </div>
     </div>
+  );
+}
+
+// КосмоХакатон: почему сдавали план вместе с правилом реакции. Три плана против двух обязательных сценариев
+export function KosmoPlansDiagram() {
+  const tr = useT();
+  const plans = [
+    {
+      name: tr("Лунный план без резерва", "The lunar plan without a reserve"),
+      base: { ok: true, why: tr("проходит, и дешевле всех", "passes, and is the cheapest") },
+      stress: { ok: false, why: tr("три года подряд на аварийном канале, а это запрещено", "three years in a row on the emergency channel, which is forbidden") },
+    },
+    {
+      name: tr("План с запасом под стресс", "A plan sized for the stress"),
+      base: { ok: false, why: tr("бак переполняется", "the tank overflows") },
+      stress: { ok: true, why: tr("проходит", "passes") },
+    },
+    {
+      name: tr("Базовый план и правило реакции", "Base plan plus a reaction rule"),
+      base: { ok: true, why: tr("проходит", "passes") },
+      stress: { ok: true, why: tr("вызывается заранее оплаченный резерв", "the prepaid reserve is called in") },
+      accent: true,
+    },
+  ];
+  const Cell = ({ label, c }: { label: string; c: { ok: boolean; why: string } }) => (
+    <div className="flex min-w-0 items-start gap-2">
+      {c.ok ? (
+        <CheckCircle size={18} weight="fill" className="mt-px shrink-0 text-accent" aria-hidden />
+      ) : (
+        <XCircle size={18} className="mt-px shrink-0 text-ink-3" aria-hidden />
+      )}
+      <div className="min-w-0">
+        <div className="text-[13px] font-medium text-ink">{label}</div>
+        <div className={`text-[12.5px] leading-snug ${c.ok ? "text-ink-2" : "text-ink-3"}`}>
+          <span className="sr-only">{c.ok ? tr("да: ", "yes: ") : tr("нет: ", "no: ")}</span>
+          {c.why}
+        </div>
+      </div>
+    </div>
+  );
+  return (
+    <ul className="divide-y divide-line">
+      {plans.map((p) => (
+        <li key={p.name} className="grid gap-3 py-4 first:pt-0 last:pb-0 sm:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)_minmax(0,1fr)] sm:gap-5">
+          <div className={`text-[14px] font-semibold leading-snug ${p.accent ? "text-accent-ink" : "text-ink"}`}>{p.name}</div>
+          <Cell label={tr("Базовый сценарий", "Base scenario")} c={p.base} />
+          <Cell label={tr("Стресс 2038", "2038 stress")} c={p.stress} />
+        </li>
+      ))}
+    </ul>
   );
 }

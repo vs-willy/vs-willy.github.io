@@ -95,7 +95,7 @@ export const articlesEn: Record<string, Article> = {
   },
 
   kosmohackathon: {
-    lead: "Three days, 40 teams in our case, and a task that was about economics, not rockets: how to keep an orbital fuel depot supplied. We plugged the case into our own simulation platform and defended a plan that survives the mandatory 2038 stress test.",
+    lead: "Three days, 40 teams in our case, and a task that was about economics, not rockets: how to keep an orbital fuel depot supplied. We built a model for choosing a supply strategy plus a simulation that checks it, and defended a plan that survives the mandatory 2038 stress test.",
     role: "Interface and the pitch",
     team: "3 people, team «Rezonans»",
     duration: "3 days, Sep 18-20, 2026",
@@ -117,24 +117,19 @@ export const articlesEn: Record<string, Article> = {
           "**E**: emergency channel",
         ],
       },
-      { h: "Where we started" },
       {
-        p: "The organizers gave a starter pack of data and rules in Python. We didn't run or copy it: we moved the data and rules into our own C# stack ourselves, with provenance and a SHA manifest of the pack, so every number could be traced back to its source.",
-      },
-      {
-        p: "We didn't start from zero. After ROBOZON we had **Praxis**, our own discrete-event simulation platform in C#/.NET. Our architect came up with it, and KosmoHackathon became its second domain after the sorting center.",
-      },
-      {
-        flow: [{ title: "Model" }, { title: "Simulation" }, { title: "Experiments" }, { title: "Results" }, { title: "Report", accent: true }],
-        caption: "The Praxis cycle. The report is built from saved run data, not filled in by hand",
+        p: "The organizers gave a starter pack of data and rules in Python. We moved it into our own C# stack ourselves and made sure every number could be traced back to where it came from.",
       },
       { h: "Betting on the Moon" },
       {
         p: "At first we bet on the Moon: the lunar channel gives the cheapest tonne. But near the end of coding the lunar tactic failed the stress test, and about six hours before the code freeze we had to change the strategy.",
       },
-      { quote: "The lunar strategy was the cheapest. It didn't survive the stress." },
       {
-        p: "The key finding: no single fixed plan passes both the base scenario and the stress. If you size volumes for the stress, the tank overflows by 120 tonnes in the base case. So we submitted a base plan plus a reaction rule: everything decided before February 1, 2038 is frozen, and you can only react with capacity contracted in advance.",
+        p: "The key finding: no single fixed plan passes both the base scenario and the stress. If you size volumes for the stress, in normal years there is nowhere to put the fuel. So we submitted a base plan plus a reaction rule: everything decided before February 1, 2038 is frozen, and you can only react with capacity paid for in advance.",
+      },
+      {
+        figure: "kosmoPlans",
+        caption: "Why the plan came with a reaction rule",
       },
       { h: "Two layers of checks" },
       {
@@ -143,14 +138,14 @@ export const articlesEn: Record<string, Article> = {
             title: "Monthly balance",
             items: [
               "Opening stock, delivered, boiled off, served, closing stock",
-              "Reserved, ordered, delivered and served tonnes tracked separately: paid capacity is not fuel yet",
-              "Hard case rules: service level, 45-day reserve, CAPEX limits, emergency channel, losses under stress",
+              "Paid capacity is not fuel yet: reserved, ordered and delivered tonnes are tracked separately",
+              "Hard case rules: service level, 45-day reserve, CAPEX limits, emergency channel",
             ],
           },
           {
             title: "Event-driven simulation",
             items: [
-              "The plan compiles into an operational model on the Praxis engine",
+              "Every delivery and refueling is its own event",
               "Berths, mission windows, transfers, boil-off between events, emergency orders on a threshold",
               "Stock is recalculated from scratch, independently of the monthly model",
             ],
@@ -159,17 +154,7 @@ export const articlesEn: Record<string, Article> = {
         caption: "The calculation model picks a strategy, the simulation checks whether the plan works delivery by delivery",
       },
       {
-        p: "On top of that, a portfolio: 8 plans across 4 scenarios (base, mandatory stress, low and high demand), selected by the Pareto front with an explanation of what keeps each plan feasible. We didn't claim a global optimum. The risk register doesn't write prose, it re-runs the actual plan under supplier failure, lunar shortfall, demand growth and price growth.",
-      },
-      { h: "Engineering" },
-      {
-        list: [
-          "An ADR for every decision, 30 records in three days",
-          "Requirements traceability: all 20 rubric criteria in `requirements.csv`",
-          "Determinism: 68 artifacts match byte for byte on a re-run",
-          "An independent `verify.py` that re-derives the verdicts without calling the main core",
-          "The solution builds its own report, and every parameter can be tweaked, up to new mission expansion inputs",
-        ],
+        p: "We compared plans across four scenarios: base, mandatory stress, low and high demand. We kept only the feasible ones and explained for each what keeps it feasible. We didn't claim a global optimum. And instead of describing risks in words, we ran them through the actual plan: supplier failure, lunar shortfall, demand growth and price growth.",
       },
       { h: "The final strategy" },
       {
@@ -183,20 +168,20 @@ export const articlesEn: Record<string, Article> = {
         caption: "Balanced, with a reserve paid for in advance",
       },
       {
-        p: "Under stress this plan has zero shortage, the 45-day reserve holds, and all hard checks pass. The first lunar tactic was cheaper in the base case, but under stress it sat on the emergency channel three years in a row, which the rules explicitly forbid.",
+        p: "Under stress this plan has zero shortage, the 45-day reserve holds, and all hard checks pass.",
       },
       {
         note: "We were open about the weak spot: the safety margin is narrow. The reserve is sized exactly for the announced stress, and a contract doesn't protect against the supplier itself failing.",
       },
       { h: "My part" },
       {
-        p: "The interface, as a continuation of the Praxis frontend, including a public calculator behind a QR code so the jury could play with the solution themselves. But my main focus was the pitch: I ran the presentation, the demo and the Q&A, with teammates joining in on answers.",
+        p: "The interface, including a public calculator behind a QR code so the jury could play with the solution themselves. The solution built its own report from the run data, and the parameters could be changed, up to new inputs for a mission expansion.",
       },
       {
-        p: "The pitch was short. The jury especially liked the two-layer approach and asked: «Is this a simulation?» The answer was «yes and no». The solution is a calculation model for choosing a strategy, with an event-driven feasibility check on top. There's no physics of storage or orbits: boil-off is an analytical coefficient, no CFD and no trajectories.",
+        p: "But my main focus was the pitch: I ran the presentation, the demo and the Q&A, with teammates joining in on answers. Time was short. The jury especially liked the two-layer approach and asked: «Is this a simulation?» The answer was «yes and no». The solution is a calculation model for choosing a strategy, with an event-driven feasibility check on top. There's no physics of storage or orbits: boil-off is a coefficient, with no flow or trajectory calculations.",
       },
       { h: "Takeaway" },
-      { p: "A platform you don't throw away after a hackathon pays off at the next one. And the pitch is its own piece of work, not a retelling of the code." },
+      { p: "The pitch is its own piece of work, not a retelling of the code." },
     ],
   },
 

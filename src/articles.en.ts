@@ -267,7 +267,7 @@ export const articlesEn: Record<string, Article> = {
     lead: "Every element on the canvas rendered about 30 attachment handles, and clients' large maps crashed the tab on open. I replaced them with a single handle that slides along the element's border. A 1000-element map now opens in 1.7 s.",
     role: "Idea, implementation and migration",
     team: "Solo, requirements with an analyst",
-    duration: "A few weeks",
+    duration: "A few weeks, August 2026",
     blocks: [
       { h: "Context" },
       {

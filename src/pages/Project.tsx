@@ -52,7 +52,17 @@ function BlockView({ b, index }: { b: Block; index: number }) {
     );
   if ("p" in b)
     return (
-      <p className="mt-4 leading-[1.75] text-ink-2">
+      <p className={`mt-4 leading-[1.75] text-ink-2 ${b.cover ? "flow-root" : ""}`}>
+        {b.cover && (
+          <img
+            src={`${import.meta.env.BASE_URL}${b.cover.src}`}
+            alt={b.cover.alt}
+            width={112}
+            height={112}
+            loading="lazy"
+            className="float-left mt-1.5 mr-4 mb-2 h-24 w-24 rounded-xl sm:h-28 sm:w-28"
+          />
+        )}
         <Rich text={b.p} />
       </p>
     );

@@ -501,7 +501,7 @@ function ExportMap() {
 
 export function ExportPathDiagram() {
   const tr = useT();
-  const step = "rounded-lg border border-line bg-surface-2/60 p-3";
+  const step = "py-3 sm:px-4 sm:py-0 sm:first:pl-0 sm:last:pr-0";
   const label = "text-[13px] font-medium text-ink";
   const note = "mt-1 text-[12.5px] leading-snug text-ink-3";
   return (
@@ -532,7 +532,7 @@ export function ExportPathDiagram() {
             <HardDrives size={18} weight="duotone" />
             <span className={label}>{tr("Сервер системы", "The system's server")}</span>
           </div>
-          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+          <div className="mt-3 grid divide-y divide-line sm:grid-cols-3 sm:divide-x sm:divide-y-0">
             <div className={step}>
               <div className={label}>{tr("Очередь", "Queue")}</div>
               <div className="mt-2.5 flex gap-1" aria-hidden>
@@ -542,7 +542,7 @@ export function ExportPathDiagram() {
               </div>
               <div className={note}>{tr("до пяти карт сразу, остальные ждут", "up to five maps at once, the rest wait")}</div>
             </div>
-            <div className={`${step} border-accent/60`}>
+            <div className={step}>
               <div className={label}>Headless Chromium</div>
               <div className="mt-2.5 max-w-[220px]">
                 <ExportMap />

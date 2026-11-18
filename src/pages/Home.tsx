@@ -21,7 +21,6 @@ const roles = [
   { text: "canvas-редактор", en: "canvas editor", hue: 42 },
   { text: "дизайн-систему", en: "design system", hue: 285 },
   { text: "e2e-тесты", en: "e2e tests", hue: 150 },
-  { text: "бэкенд на C#", en: "C# backend", hue: 250 },
 ];
 
 function Rotating() {

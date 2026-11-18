@@ -505,7 +505,7 @@ export const articlesEn: Record<string, Article> = {
   },
 
   export: {
-    lead: "Map images were built right in the user's browser, and on large maps the interface froze or crashed. I moved export to the server into headless Chromium: now it doesn't depend on the client's machine and can do things that were impossible in the browser.",
+    lead: "Map images were built right in the user's browser, and on large maps the interface froze or crashed. I moved export to the server into headless Chromium: now it doesn't depend on the user's computer and can do things that were impossible in the browser.",
     role: "Idea and implementation",
     team: "Solo",
     duration: "About a sprint, 2025",
@@ -515,20 +515,14 @@ export const articlesEn: Record<string, Article> = {
         p: "Users export process maps as images or documents, and client maps are big, 500-1000 elements. Export was done on the frontend with html2image. A 250-element map took about 20 seconds to export, could crash, and loaded the user's computer the whole time. People tried to patch it point by point, but it didn't help.",
       },
       { h: "The idea" },
-      { quote: "The server is always more powerful than the client's machine." },
+      { quote: "The server is always more powerful than the user's computer." },
       {
         p: "I proposed changing the approach itself. The frontend only sends export settings, and the server opens the map on behalf of the user in headless Chromium, hides extra interface elements and takes a screenshot at the required resolution and quality.",
       },
       {
-        flow: [
-          { title: "Frontend", note: "settings" },
-          { title: "Queue", note: "up to 5 at once" },
-          { title: "Chromium", note: "map as the user", accent: true },
-          { title: "Shots", note: "stitching" },
-          { title: "File", note: "or zip" },
-        ],
-        caption: "The export path on the server",
+        p: "This isn't a shared server of ours. The system is installed at each client company, so export runs on that company's own server, next to the rest of the services. It's just that instead of one employee's computer, the map is drawn by a machine better suited for it.",
       },
+      { figure: "exportPath", caption: "The export path" },
       {
         p: "Chromium isn't bundled with the product: its path and settings are configured on the backend at deploy time. The browser starts once per service and is reused. Up to five maps export at once, the rest wait in a queue.",
       },
@@ -543,7 +537,7 @@ export const articlesEn: Record<string, Article> = {
           { title: "In the browser", items: ["A 250-element map in about 20 s", "Could crash", "Loaded the user's computer"] },
           { title: "On the server", items: ["About 15 s or the same", "Doesn't touch the user's machine", "Flexible settings: quality, PDF, PNG, JPG, several maps"] },
         ],
-        caption: "Speed isn't the point: export no longer depends on the client's computer",
+        caption: "Speed isn't the point: export no longer depends on the user's computer",
       },
       {
         p: "When we needed to export a map together with its child maps, the solution was already there. The server collects the candidate maps, opens and shoots each one in turn, checking permissions on each, and packs everything into a zip. Doing that properly on the frontend wouldn't have been possible.",

@@ -1,7 +1,7 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useT } from "../i18n";
 import { motion, useReducedMotion } from "motion/react";
-import { CheckCircle, XCircle } from "@phosphor-icons/react";
+import { ArrowDown, ArrowUp, CheckCircle, Desktop, FileZip, HardDrives, XCircle } from "@phosphor-icons/react";
 
 // Как устроена дизайн-система: откуда берутся пакеты и куда они уходят
 export function DesignSystemDiagram() {
@@ -453,6 +453,113 @@ export function E2eCaseDiagram() {
           </li>
         ))}
       </ol>
+    </div>
+  );
+}
+
+function ExportMap() {
+  const reduce = useReducedMotion();
+  const [tile, setTile] = useState(0);
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(() => setTile((t) => (t + 1) % 4), 1100);
+    return () => clearInterval(id);
+  }, [reduce]);
+  const tiles = [
+    [0, 0],
+    [60, 0],
+    [0, 40],
+    [60, 40],
+  ];
+  return (
+    <svg viewBox="0 0 120 80" className="block h-auto w-full" aria-hidden>
+      <rect x="0.5" y="0.5" width="119" height="79" rx="3" className="fill-bg stroke-line" />
+      <g className="stroke-line-strong" strokeWidth="1" fill="none">
+        <path d="M30 20 H52 M68 20 H88 M98 26 V50 M88 58 H68 M52 58 H34 M24 52 V28" />
+      </g>
+      <g className="fill-surface-2 stroke-line-strong" strokeWidth="1">
+        <rect x="10" y="14" width="20" height="12" rx="2" />
+        <rect x="52" y="14" width="16" height="12" rx="2" />
+        <rect x="88" y="14" width="20" height="12" rx="2" />
+        <rect x="88" y="50" width="20" height="12" rx="2" />
+        <rect x="52" y="52" width="16" height="12" rx="2" />
+        <rect x="14" y="46" width="20" height="12" rx="2" />
+      </g>
+      <path d="M60 0 V80 M0 40 H120" className="stroke-ink-3" strokeDasharray="2 2" strokeWidth="0.75" />
+      <rect
+        x={tiles[tile][0] + 1}
+        y={tiles[tile][1] + 1}
+        width="58"
+        height="38"
+        rx="2"
+        className="fill-accent/15 stroke-accent transition-all duration-300"
+        strokeWidth="1.25"
+      />
+    </svg>
+  );
+}
+
+export function ExportPathDiagram() {
+  const tr = useT();
+  const step = "rounded-lg border border-line bg-surface-2/60 p-3";
+  const label = "text-[13px] font-medium text-ink";
+  const note = "mt-1 text-[12.5px] leading-snug text-ink-3";
+  return (
+    <div className="rounded-xl border border-dashed border-line-strong p-3 sm:p-4">
+      <div className="mb-3 text-[12.5px] text-ink-3">
+        {tr("Контур компании-клиента: система стоит у нее, а не на общем сервере", "The client company's own setup: the system runs there, not on a shared server")}
+      </div>
+      <div className="grid gap-2">
+        <div className="rounded-lg border border-line bg-surface p-3 sm:flex sm:items-center sm:gap-5">
+          <div className="flex shrink-0 items-center gap-2 text-ink">
+            <Desktop size={18} weight="duotone" />
+            <span className={label}>{tr("Компьютер пользователя", "User's computer")}</span>
+          </div>
+          <ul className="mt-3 space-y-2 text-[13px] leading-snug text-ink-2 sm:mt-0 sm:flex sm:gap-5 sm:space-y-0">
+            <li className="flex gap-2 sm:whitespace-nowrap">
+              <ArrowDown size={14} className="mt-0.5 shrink-0 text-accent-ink" />
+              {tr("отправляет настройки", "sends settings")}
+            </li>
+            <li className="flex gap-2 sm:whitespace-nowrap">
+              <ArrowUp size={14} className="mt-0.5 shrink-0 text-accent-ink" />
+              {tr("получает файл", "gets the file")}
+            </li>
+          </ul>
+        </div>
+
+        <div className="rounded-lg border border-line bg-surface p-3">
+          <div className="flex items-center gap-2 text-ink">
+            <HardDrives size={18} weight="duotone" />
+            <span className={label}>{tr("Сервер системы", "The system's server")}</span>
+          </div>
+          <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            <div className={step}>
+              <div className={label}>{tr("Очередь", "Queue")}</div>
+              <div className="mt-2.5 flex gap-1" aria-hidden>
+                {[0, 1, 2, 3, 4].map((i) => (
+                  <span key={i} className={`h-5 flex-1 rounded-sm ${i < 3 ? "bg-accent" : "border border-line-strong"}`} />
+                ))}
+              </div>
+              <div className={note}>{tr("до пяти карт сразу, остальные ждут", "up to five maps at once, the rest wait")}</div>
+            </div>
+            <div className={`${step} border-accent/60`}>
+              <div className={label}>Headless Chromium</div>
+              <div className="mt-2.5 max-w-[220px]">
+                <ExportMap />
+              </div>
+              <div className={note}>{tr("открывает карту от имени пользователя и снимает частями", "opens the map as the user and shoots it in parts")}</div>
+            </div>
+            <div className={step}>
+              <div className={label}>{tr("Склейка", "Stitching")}</div>
+              <div className="mt-2.5 flex items-center gap-2 text-ink-2" aria-hidden>
+                <FileZip size={30} weight="duotone" className="text-accent-ink" />
+                <span className="font-mono text-[12px] whitespace-nowrap">png jpg pdf</span>
+              </div>
+              <div className={note}>{tr("один файл или zip, если карт несколько", "one file, or a zip for several maps")}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

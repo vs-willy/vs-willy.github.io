@@ -33,6 +33,7 @@ const diagrams: Record<DiagramKey, () => React.ReactNode> = {
 
 // Эти схемы сами перестраиваются под узкий экран, им не нужна минимальная ширина
 const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles", "e2eCase", "commands", "listeners", "facade", "igorContext", "packagesOverview", "exportPath"]);
+const bare = new Set<DiagramKey>(["exportPath"]);
 
 const sid = (i: number) => `s-${i}`;
 
@@ -84,7 +85,7 @@ function BlockView({ b, index }: { b: Block; index: number }) {
   if ("note" in b) return <Note text={b.note} />;
   if ("figure" in b)
     return (
-      <Figure caption={b.caption}>
+      <Figure caption={b.caption} bare={bare.has(b.figure)}>
         {fluid.has(b.figure) ? (
           diagrams[b.figure]()
         ) : (

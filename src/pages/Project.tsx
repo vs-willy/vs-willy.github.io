@@ -12,7 +12,7 @@ import { CommandsDemo, FacadeCompare, ListenersTable } from "../ui/CanvasDemos";
 import { HandlesVisual } from "../ui/CanvasVisuals";
 import { IgorDemo } from "../ui/IgorDemo";
 import { PackagesOverview } from "../ui/DesignSystemVisuals";
-import { DesignSystemDiagram, KkmDiagram, KosmoPlansDiagram, LctRoutesDiagram, RobozonLineDiagram, E2eCaseDiagram, ExportPathDiagram } from "../ui/Diagrams";
+import { DesignSystemDiagram, KkmDiagram, KosmoPlansDiagram, LctRoutesDiagram, RobozonLineDiagram, E2eCaseDiagram, ExportPathDiagram, ResxDiagram } from "../ui/Diagrams";
 import { ProjectThumb } from "../ui/ProjectRow";
 
 const diagrams: Record<DiagramKey, () => React.ReactNode> = {
@@ -22,6 +22,7 @@ const diagrams: Record<DiagramKey, () => React.ReactNode> = {
   handles: () => <HandlesVisual />,
   designSystem: () => <DesignSystemDiagram />,
   kkm: () => <KkmDiagram />,
+  resx: () => <ResxDiagram />,
   lctRoutes: () => <LctRoutesDiagram />,
   kosmoPlans: () => <KosmoPlansDiagram />,
   exportPath: () => <ExportPathDiagram />,
@@ -32,7 +33,7 @@ const diagrams: Record<DiagramKey, () => React.ReactNode> = {
 };
 
 // Эти схемы сами перестраиваются под узкий экран, им не нужна минимальная ширина
-const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles", "e2eCase", "commands", "listeners", "facade", "igorContext", "packagesOverview", "exportPath"]);
+const fluid = new Set<DiagramKey>(["lctRoutes", "kosmoPlans", "robozonLine", "handles", "e2eCase", "commands", "listeners", "facade", "igorContext", "packagesOverview", "exportPath", "kkm", "resx"]);
 const bare = new Set<DiagramKey>(["exportPath"]);
 
 const sid = (i: number) => `s-${i}`;

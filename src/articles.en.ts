@@ -636,10 +636,7 @@ export const articlesEn: Record<string, Article> = {
       {
         p: "Translating the whole product took about a month because of the volume. My mentor and I worked out the concept in advance and built it our own way rather than with i18next: the backend keeps .resx dictionaries in ru, en, de and it and serves them for the current locale, and the frontend reads them by key. That way backend and frontend translations live in one place and never drift apart.",
       },
-      {
-        flow: [{ title: ".resx", note: "ru, en, de, it" }, { title: "Backend", note: "dictionary per locale" }, { title: "Frontend", note: "lookup by key", accent: true }],
-        caption: "One source of translations for both sides",
-      },
+      { figure: "resx", caption: "One source of translations for both sides" },
       {
         p: "A fun moment: while I was doing translations, the team moved all project folders into a single `src/`. Git refused to merge such a move properly, but I managed to sort out the conflict. The POS shipped.",
       },

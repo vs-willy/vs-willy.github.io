@@ -1,7 +1,7 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { useT } from "../i18n";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowDown, ArrowUp, CheckCircle, Desktop, FileZip, HardDrives, XCircle } from "@phosphor-icons/react";
+import { ArrowDown, ArrowUp, CheckCircle, Desktop, FileZip, HardDrives, PlugsConnected, Printer, Storefront, TerminalWindow, XCircle } from "@phosphor-icons/react";
 
 // Как устроена дизайн-система: откуда берутся пакеты и куда они уходят
 export function DesignSystemDiagram() {
@@ -57,57 +57,151 @@ export function DesignSystemDiagram() {
 }
 
 // Как касса печатает чек: фронт не знает протокола ККМ, все идет через обертку и локальный демон
+function Receipt() {
+  const reduce = useReducedMotion();
+  return (
+    <div className="relative mx-auto h-[66px] w-[60px] overflow-hidden" aria-hidden>
+      <div className="absolute inset-x-0 top-0 z-10 h-[5px] rounded-full bg-ink-3" />
+      <motion.svg
+        viewBox="0 0 48 60"
+        className="absolute left-[6px] top-[2px] w-[48px]"
+        initial={false}
+        animate={reduce ? { y: 0 } : { y: [-60, 0, 0] }}
+        transition={reduce ? undefined : { duration: 3.2, times: [0, 0.45, 1], repeat: Infinity, ease: "easeOut" }}
+      >
+        <path d="M0 0 H48 V54 l-4 4 -4 -4 -4 4 -4 -4 -4 4 -4 -4 -4 4 -4 -4 -4 4 -4 -4 -4 4 Z" className="fill-surface-2 stroke-line-strong" strokeWidth="1" />
+        <g className="fill-ink-3">
+          <rect x="7" y="8" width="34" height="3" rx="1.5" />
+          <rect x="7" y="17" width="22" height="2.5" rx="1.25" />
+          <rect x="7" y="24" width="28" height="2.5" rx="1.25" />
+          <rect x="7" y="31" width="18" height="2.5" rx="1.25" />
+          <rect x="7" y="42" width="34" height="3" rx="1.5" />
+        </g>
+      </motion.svg>
+    </div>
+  );
+}
+
 export function KkmDiagram() {
   const tr = useT();
-  const reduce = useReducedMotion();
-  const id = useId().replace(/:/g, "");
-  const y = 72;
-  const boxes = [
-    { x: 8, title: tr("Касса", "POS"), sub: "React" },
-    { x: 164, title: tr("Обертка", "Wrapper"), sub: "cashRegister" },
-    { x: 320, title: tr("Демон C#", "C# daemon"), sub: "localhost:8888" },
-    { x: 476, title: tr("ККМ", "Fiscal printer"), sub: tr("драйвер Atol", "Atol driver") },
+  const nodes = [
+    { icon: Storefront, title: tr("Касса", "POS"), sub: "React", note: tr("кассир жмет «Пробить чек»", "the cashier clicks «Print receipt»") },
+    { icon: PlugsConnected, title: tr("Обертка", "Wrapper"), sub: "cashRegister", note: tr("единственное место, которое знает про ККМ", "the only place that knows about the printer"), accent: true },
+    { icon: TerminalWindow, title: tr("Демон на C#", "C# daemon"), sub: "localhost:8888", note: tr("локальный сервис рядом с браузером", "a local service next to the browser") },
+    { icon: Printer, title: "ККМ", sub: "Atol", note: tr("печатает чек", "prints the receipt"), receipt: true },
   ];
-  const w = 108;
-  const arrows = [
-    { x1: 8 + w, x2: 164, label: tr("чек", "receipt") },
-    { x1: 164 + w, x2: 320, label: "fetch" },
-    { x1: 320 + w, x2: 476, label: tr("драйвер", "driver") },
+  const links = ["чек", "fetch", tr("драйвер", "driver")];
+  const zones = [
+    { label: tr("компьютер кассира", "the cashier's computer"), span: "sm:col-span-5" },
+    { label: tr("оборудование", "hardware"), span: "sm:col-start-7" },
   ];
   return (
-    <svg viewBox="0 0 592 148" className="h-auto w-full" role="img" aria-label={tr("Касса на React отправляет чек через обертку в локальный демон на C#, который печатает его на ККМ через драйвер Atol", "The React POS sends a receipt through a wrapper to a local C# daemon that prints it on the fiscal printer via the Atol driver")}>
-      <defs>
-        <marker id={`${id}-a`} viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M0 0 L8 4 L0 8 z" className="fill-ink-3" />
-        </marker>
-      </defs>
-      {boxes.map((b, i) => (
-        <g key={b.title}>
-          <rect x={b.x} y={y - 28} width={w} height="56" rx="10" className={i === 3 ? "fill-accent-soft stroke-accent" : "fill-surface-2 stroke-line-strong"} />
-          <text x={b.x + w / 2} y={y - 4} textAnchor="middle" className="fill-ink text-[13px] font-semibold">{b.title}</text>
-          <text x={b.x + w / 2} y={y + 14} textAnchor="middle" className="fill-ink-3 font-mono text-[10.5px]">{b.sub}</text>
-        </g>
+    <div className="grid gap-y-1 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-x-2">
+      {zones.map((z) => (
+        <div key={z.label} className={`hidden border-b border-line pb-1.5 text-center text-[12px] text-ink-3 sm:block ${z.span}`}>
+          {z.label}
+        </div>
       ))}
-      {arrows.map((a) => (
-        <g key={a.label}>
-          <line x1={a.x1} y1={y} x2={a.x2} y2={y} className="stroke-ink-3" markerEnd={`url(#${id}-a)`} />
-          <text x={(a.x1 + a.x2) / 2} y={y - 10} textAnchor="middle" className="fill-ink-3 font-mono text-[10px]">{a.label}</text>
-        </g>
-      ))}
-      {/* граница: что знает фронт, а что скрыто за оберткой */}
-      <path d="M154 24 V128" className="stroke-accent/60" strokeDasharray="3 4" />
-      <text x="146" y="140" textAnchor="end" className="fill-ink-3 font-mono text-[10px]">{tr("код кассы", "POS code")}</text>
-      <text x="162" y="140" className="fill-accent font-mono text-[10px]">{tr("детали оборудования спрятаны за оберткой", "hardware details hidden behind the wrapper")}</text>
-      {!reduce && (
-        <motion.circle
-          cy={y}
-          r={4.5}
-          className="fill-accent"
-          animate={{ cx: [8 + w - 4, 164, 164 + w, 320, 320 + w, 476 + 4], opacity: [0, 1, 1, 1, 1, 0] }}
-          transition={{ duration: 3.2, repeat: Infinity, repeatDelay: 0.8, ease: "easeInOut" }}
-        />
-      )}
-    </svg>
+      {nodes.map((n, i) => {
+        const Icon = n.icon;
+        return (
+          <Fragment key={n.sub}>
+            {i > 0 && (
+              <div className="flex items-center justify-center gap-1.5 py-1 text-[12px] text-ink-3 sm:flex-col sm:gap-0.5 sm:pt-6 sm:pb-0 sm:justify-start" aria-hidden>
+                <span className="font-mono [font-variant-ligatures:none]">{links[i - 1]}</span>
+                <ArrowDown size={13} className="sm:-rotate-90" />
+              </div>
+            )}
+            <div className={`flex gap-3 rounded-lg px-3 py-3 sm:flex-col sm:items-center sm:gap-2 sm:px-1 sm:text-center ${n.accent ? "bg-accent-soft" : ""}`}>
+              <Icon size={24} weight="duotone" className={`shrink-0 ${n.accent ? "text-accent-ink" : "text-ink-2"}`} />
+              <div className="min-w-0 flex-1">
+                <div className="text-[14px] font-medium text-ink">{n.title}</div>
+                <div className="font-mono text-[12px] text-ink-3">{n.sub}</div>
+                <div className="mt-1.5 text-[12.5px] leading-snug text-ink-2">{n.note}</div>
+              </div>
+              {n.receipt && <Receipt />}
+            </div>
+          </Fragment>
+        );
+      })}
+    </div>
+  );
+}
+
+const RESX_LANGS = ["ru", "en", "de", "it"] as const;
+const RESX_ROWS = [
+  { key: "Cart.Pay", v: ["Оплатить", "Pay", "Bezahlen", "Paga"] },
+  { key: "Order.Paid", v: ["Заказ оплачен", "Order paid", "Bestellung bezahlt", "Ordine pagato"] },
+];
+
+export function ResxDiagram() {
+  const tr = useT();
+  const reduce = useReducedMotion();
+  const [lang, setLang] = useState(1);
+  const [auto, setAuto] = useState(true);
+  useEffect(() => {
+    if (reduce || !auto) return;
+    const id = setInterval(() => setLang((l) => (l + 1) % 4), 1800);
+    return () => clearInterval(id);
+  }, [reduce, auto]);
+  const pick = (i: number) => {
+    setAuto(false);
+    setLang(i);
+  };
+  return (
+    <div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-[12.5px] text-ink-3">{tr("Локаль:", "Locale:")}</span>
+        {RESX_LANGS.map((l, i) => (
+          <button
+            key={l}
+            type="button"
+            onClick={() => pick(i)}
+            aria-pressed={i === lang}
+            className={`rounded-md px-2 py-0.5 font-mono text-[12px] transition-colors ${i === lang ? "bg-accent text-white" : "bg-surface-2 text-ink-2 hover:text-ink"}`}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-3">
+        <table className="w-full border-collapse text-left text-[12px] sm:text-[12.5px]">
+          <caption className="pb-1.5 text-left text-[12.5px] text-ink-3">{tr("Словари .resx на бэкенде", ".resx dictionaries on the backend")}</caption>
+          <thead>
+            <tr className="border-b border-line text-ink-3">
+              <th className="py-1.5 pr-2 font-normal">{tr("ключ", "key")}</th>
+              {RESX_LANGS.map((l, i) => (
+                <th key={l} className={`px-1.5 py-1.5 font-mono font-normal transition-colors sm:px-2 ${i === lang ? "text-accent-ink" : ""}`}>{l}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {RESX_ROWS.map((r) => (
+              <tr key={r.key} className="border-b border-line">
+                <td className="py-1.5 pr-2 font-mono text-ink-2">{r.key}</td>
+                {r.v.map((v, i) => (
+                  <td key={v} className={`px-1.5 py-1.5 leading-snug transition-colors sm:px-2 ${i === lang ? "bg-accent-soft text-ink" : "text-ink-3"}`}>{v}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2 sm:gap-6">
+        <div>
+          <div className="text-[13px] font-medium text-ink">{tr("Фронт", "Frontend")}</div>
+          <div className="mt-0.5 text-[12.5px] text-ink-3">{tr("кнопка оплаты", "the pay button")}</div>
+          <span className="mt-2 inline-block rounded-md bg-accent px-3 py-1.5 text-[13px] font-medium text-white">{RESX_ROWS[0].v[lang]}</span>
+        </div>
+        <div>
+          <div className="text-[13px] font-medium text-ink">{tr("Бэкенд", "Backend")}</div>
+          <div className="mt-0.5 text-[12.5px] text-ink-3">{tr("уведомление о заказе", "the order notification")}</div>
+          <span className="mt-2 inline-block rounded-md border border-line px-3 py-1.5 text-[13px] text-ink-2">{RESX_ROWS[1].v[lang]}</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -160,7 +254,7 @@ function LctPanel({ kind }: { kind: "short" | "engineer" }) {
       )}
 
       {/* врезка в действующую сеть */}
-      <circle cx={src.x} cy={src.y} r="5" className="fill-ink" />
+      <circle cx={src.x} cy={src.y} r="5" className="fill-surface-2 stroke-line-strong" strokeWidth="1" />
     </svg>
   );
 }
